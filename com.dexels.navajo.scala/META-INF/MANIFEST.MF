@@ -4,10 +4,8 @@ Bundle-Description: A Hello World bundle
 Bundle-ManifestVersion: 2
 Bundle-Version: 1.0.0.qualifier
 Include-Resource: lib
-Export-Package: com.dexels.navajo.rhino,
- com.dexels.navajo.rhino.flow,
- com.dexels.navajo.rhino.include,
- org.mozilla.javascript
+Export-Package: com.dexels.navajo.scala,
+ com.dexels.navajo.scala.document
 Bundle-Vendor: Dexels
 Bundle-ClassPath: .
 Import-Package: com.dexels.navajo.adapter,
@@ -19,6 +17,20 @@ Import-Package: com.dexels.navajo.adapter,
  com.dexels.navajo.mapping.compiler.meta,
  com.dexels.navajo.script.api;version="1.0.0",
  com.dexels.navajo.server,
+ com.dexels.sportlink.adapters,
  org.dexels.grus;version="1.0.0",
- org.slf4j;version="1.7.5"
+ org.junit;version="4.8.2";resolution:=optional,
+ org.slf4j;version="1.7.5",
+ scala;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d",
+ scala.collection;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d",
+ scala.collection.concurrent;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d",
+ scala.collection.convert;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d",
+ scala.collection.generic;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d",
+ scala.collection.immutable;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d",
+ scala.collection.mutable;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d",
+ scala.collection.parallel;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d",
+ scala.collection.parallel.immutable;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d",
+ scala.collection.parallel.mutable;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d",
+ scala.collection.script;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d",
+ scala.runtime;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d"
 Service-Component: OSGI-INF/script.xml

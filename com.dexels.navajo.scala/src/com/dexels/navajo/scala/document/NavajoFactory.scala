@@ -1,6 +1,7 @@
 package com.dexels.navajo.scala.document
 
 import com.dexels.navajo.document.Navajo
+import com.dexels.navajo.document.Message
 
 
 object NavajoFactory {
@@ -12,8 +13,12 @@ object NavajoFactory {
 	  new NavajoDocument(parent)
 	}
 	
-	def createMessage(doc: NavajoDocument): NavajoMessage = {
-	  new NavajoMessage(com.dexels.navajo.document.NavajoFactory.getInstance().createMessage(doc.parent))
+	def createMessage(doc: NavajoDocument, name: String): NavajoMessage = {
+	  new NavajoMessage(com.dexels.navajo.document.NavajoFactory.getInstance().createMessage(doc.parent,name))
+	}
+
+	def createArrayMessage(doc: NavajoDocument, name: String): NavajoMessage = {
+	  new NavajoMessage(com.dexels.navajo.document.NavajoFactory.getInstance().createMessage(doc.parent,name,Message.MSG_TYPE_ARRAY))
 	}
 
 }

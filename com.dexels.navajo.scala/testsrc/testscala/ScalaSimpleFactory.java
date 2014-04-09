@@ -3,7 +3,7 @@ import com.dexels.navajo.server.*;
 import com.dexels.navajo.mapping.*;
 import com.dexels.navajo.script.api.*;
 
-public class TestScalaSimpleFactory extends CompiledScriptFactory {
+public class ScalaSimpleFactory extends CompiledScriptFactory {
 	protected String getScriptName() {
 		return "testscala.TestScalaSimple";
 	}

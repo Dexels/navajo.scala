@@ -5,28 +5,29 @@ import com.dexels.navajo.adapter.SQLMap
 import com.dexels.navajo.scala.document.NavajoFactory
 import com.dexels.navajo.scala.document.NavajoRuntime
 import com.dexels.navajo.scala.document.NavajoMessage
+import com.dexels.navajo.functions.ToSecureImage
 
 class Script extends ScalaCompiledScript with Functions with Adapters {
 
   override def run(a: NavajoRuntime) {
-    toSecureImage("aap");
+     ToSecureImage("aap");
     val tralala = a.input.message("Tra")
 
+    
     tralala.each(msg => {
-      msg.property("MyProp").setValue(toSecureImage("oops"))
+      msg.property("MyProp").value(ToSecureImage("oops"))
     })
 
     callScript(a.output, result => {
       tralala.property("Mombasa")
     })
-
     a.output.message("Message").one(cMessage => {
-      sqlMap(map => {
-        map.setQuery("aaap")
-        map.setDatasource("sportlink")
+      sqlMap(cMessage,map => {
+        map.query("aaap")
+        map.datasource("sportlink")
         map.withResultSet(f => {
-        	val newMsg = cMessage.addMessage
-        	newMsg.addProperty("Name").setValue(f.getColumnValue()).setDescription("Booom").setDirection("in")
+        	val newMsg = cMessage.addMessage("aap")
+        	newMsg.addProperty("Name").value(f.getColumnValue()).description("Booom").direction("in")
           f.getColumnValue("a")
 
         })

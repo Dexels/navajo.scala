@@ -7,8 +7,8 @@ class NavajoProperty(val parent: Property) {
   def value() = {
     parent.getTypedValue()
   }
-  
-  def setValue(o: Any): NavajoProperty = {
+
+  def value(o: Any): NavajoProperty = {
     parent.setAnyValue(o)
     return this
   }
@@ -16,8 +16,8 @@ class NavajoProperty(val parent: Property) {
   def propertyType: String = {
     parent.getType()
   }
-  
-  def setType(propertyType: String): NavajoProperty = {
+
+  def propertyType(propertyType: String): NavajoProperty = {
     parent.setType(propertyType)
     return this
   }
@@ -25,8 +25,8 @@ class NavajoProperty(val parent: Property) {
   def description(): String = {
     parent.getDescription()
   }
-  
-  def setDescription(o: String): NavajoProperty = {
+
+  def description(o: String): NavajoProperty = {
     parent.setDescription(o)
     return this
   }
@@ -34,32 +34,37 @@ class NavajoProperty(val parent: Property) {
   def cardinality(): String = {
     parent.getCardinality()
   }
-  
-  def setCardinality(o: String): NavajoProperty = {
+
+  def cardinality(o: String): NavajoProperty = {
     parent.setCardinality(o)
     return this
   }
 
-  
   def direction(): String = {
     parent.getDirection()
   }
-  
-  def setDirection(o: String): NavajoProperty = {
+
+  def direction(o: String): NavajoProperty = {
     parent.setDirection(o)
     return this
   }
-  
-  
+
+  def subtype(): String = {
+    parent.getSubType()
+  }
+
+  def subtype(o: String): NavajoProperty = {
+    parent.setSubType(o)
+    return this
+  }
+
   def length(): Int = {
     parent.getLength()
   }
-  
-  def setLength(o: Int): NavajoProperty = {
+
+  def length(o: Int): NavajoProperty = {
     parent.setLength(o)
     return this
   }
 
-
-  
 }

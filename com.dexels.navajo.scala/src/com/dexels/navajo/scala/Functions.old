@@ -1,0 +1,50 @@
+package com.dexels.navajo.scala
+
+import com.dexels.navajo.document.types.Binary
+import com.dexels.navajo.parser._
+import com.dexels.navajo.document.types.Money
+/*	<function name="ToSecureImage" class="com.dexels.navajo.functions.ToSecureImage">
+		<description>Creates a Binary containing a PNG image representation of
+			specified objects string representation&#xa; max. inputlength is 6
+			chars
+		</description>
+		<input>string</input>
+		<result>binary</result>
+	</function>
+	<function name="ToMoney" class="com.dexels.navajo.functions.ToMoney">
+		<description>Cast a string/double/integer to a money object
+		</description>
+		<input>string|float|integer|money</input>
+		<result>money</result>
+	</function>
+*/
+trait Functions extends BaseFunctions { 
+  self : ScalaCompiledScript =>
+	def toSecureImage (input:String): Binary = {
+	  val function = setupFunction(new com.dexels.navajo.functions.ToSecureImage())
+	  function.insertOperand(input)
+	  function.evaluate().asInstanceOf[Binary]
+	}
+	def toMoney (input:String): Money = {
+	  val function = setupFunction(new com.dexels.navajo.functions.ToMoney())
+	  function.insertOperand(input)
+	  function.evaluate().asInstanceOf[Money]
+	}
+	def toMoney (input:Int): Money = {
+	  val function = setupFunction(new com.dexels.navajo.functions.ToMoney())
+	  function.insertOperand(input)
+	  function.evaluate().asInstanceOf[Money]
+	}
+	def singleValueQuery (transactionId:Int, query: String): Any = {
+	  val function = setupFunction(new com.dexels.navajo.adapter.functions.SingleValueQuery())
+	  function.insertOperand(transactionId)
+	  function.insertOperand(query)
+	  return function.evaluate()
+	}
+	def trim (input:String): String = {
+	  val function = setupFunction(new com.dexels.navajo.functions.Trim())
+	  function.insertOperand(input)
+	  function.evaluate().asInstanceOf[String]
+	}
+
+}

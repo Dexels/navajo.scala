@@ -8,18 +8,28 @@ import com.dexels.navajo.adapter.SQLMap
 import com.dexels.navajo.scala.document.NavajoDocument
 import com.dexels.navajo.scala.document.NavajoRuntime
 import com.dexels.navajo.scala.document.NavajoRuntime
+import scala.collection.mutable.ListBuffer
 abstract class ScalaCompiledScript extends CompiledScript {
+    var runtime: NavajoRuntime = null
+	val validations = new ListBuffer[NavajoRuntime=>Boolean]
+	
 	override def finalBlock(a: Access) {
 	  
 	}
 	
 	override def setValidations() {
-	  
+	  //runtime.input.property("")
+	}
+	
+	def addValidation(validation:NavajoRuntime=>Boolean) {
+	  validations.append(validation)
 	}
 	
 	override def execute(a: Access) {
-	  run(new NavajoRuntime(a))
+	  runtime = new NavajoRuntime(scriptAccess)
+	  run(runtime)
 	}
+	
 	
 	def run(r: NavajoRuntime)
 	  	
@@ -27,6 +37,10 @@ abstract class ScalaCompiledScript extends CompiledScript {
 	  
 	}
 	
+	def callRemoteScript(resource: String, input: NavajoDocument, withResult: NavajoDocument=>Unit) {
+	  
+	}
+
 	def callAdapter(adapter: Class[_ <: Mappable], withMap: Mappable=>Unit) {
 	  
 	}
@@ -36,7 +50,9 @@ abstract class ScalaCompiledScript extends CompiledScript {
 	}
 
 
-
+	def scriptAccess: Access = {
+	  return myAccess
+	}
 	
 	def test {
 	//  callAdapter(SQLM, withMap)

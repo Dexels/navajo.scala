@@ -1,0 +1,31 @@
+<tml>
+	<message name="Input" type="array">
+		<message name="Input" index="0">
+			<property  direction="out" name="Id" type="String" value="Id0"/>
+			<property  direction="out" name="Value" type="String" value="Value0"/>
+		</message>
+		<message name="Input" index="1">
+			<property  direction="out" name="Id" type="String" value="Id1"/>
+			<property  direction="out" name="Value" type="String" value="Value1"/>
+		</message>
+		<message name="Input" index="2">
+			<property  direction="out" name="Id" type="String" value="Id2"/>
+			<property  direction="out" name="Value" type="String" value="Value2"/>
+		</message>
+	</message>
+	<message name="JoinInput" type="array">
+		<message name="JoinInput" index="0">
+			<property  direction="out" name="Id" type="String" value="Id0"/>
+			<property  direction="out" name="JoinValue" type="String" value="JoinValue0"/>
+		</message>
+		<message name="JoinInput" index="1">
+			<property  direction="out" name="Id" type="String" value="Id1"/>
+			<property  direction="out" name="JoinValue" type="String" value="JoinValue1"/>
+		</message>
+		<message name="JoinInput" index="2">
+			<property  direction="out" name="Id" type="String" value="Id2"/>
+			<property  direction="out" name="JoinValue" type="String" value="JoinValue2"/>
+		</message>
+	</message>
+
+</tml>
