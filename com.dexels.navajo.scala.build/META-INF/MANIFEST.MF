@@ -1,8 +1,8 @@
-Bundle-Name: Sportlink Adapters
-Bundle-SymbolicName: com.sportlink.adapters
+Bundle-Name: Navajo Scala Api Builder
+Bundle-SymbolicName: com.dexels.navajo.scala.build
 Bundle-Description: Core version manager
 Bundle-ManifestVersion: 2
-Bundle-Version: 3.0.11.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Dexels
 Bundle-ClassPath: .,
  lib/treehugger_2.10-0.3.0.jar

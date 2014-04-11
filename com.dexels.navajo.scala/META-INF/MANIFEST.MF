@@ -10,6 +10,7 @@ Bundle-Vendor: Dexels
 Bundle-ClassPath: .
 Import-Package: com.dexels.navajo.adapter,
  com.dexels.navajo.adapter.sqlmap,
+ com.dexels.navajo.client;version="1.0.0",
  com.dexels.navajo.document;version="2.2.0",
  com.dexels.navajo.document.types;version="2.2.1",
  com.dexels.navajo.functions;version="3.1.7",
@@ -34,3 +35,4 @@ Import-Package: com.dexels.navajo.adapter,
  scala.collection.script;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d",
  scala.runtime;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d"
 Service-Component: OSGI-INF/script.xml
+Require-Bundle: com.dexels.navajo.adapters;bundle-version="2.0.9"

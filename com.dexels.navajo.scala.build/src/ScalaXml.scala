@@ -9,6 +9,7 @@ import scala.collection.mutable.ListBuffer
 import java.io.File
 import java.io.PrintWriter
 import com.dexels.navajo.document.NavajoFactory
+import scala.xml.NodeSeq
 //com.dexels.navajo.functions.util
 
 object ScalaXml {
@@ -18,28 +19,150 @@ object ScalaXml {
     is.close()
 
     val is2 = ScalaXml.getClass().getClassLoader().getResourceAsStream("adapters.xml");
-    createFunctionTrait("Adapters", "com.dexels.navajo.scala", is2, new File("/Users/frank/git/navajo.scala/com.dexels.navajo.scala/src/com/dexels/navajo/scala"))
+    createAdaptersTrait("Adapters", "com.dexels.navajo.scala", is2, new File("/Users/frank/git/navajo.scala/com.dexels.navajo.scala/src/com/dexels/navajo/scala"))
     is2.close()
 
   }
 
-  //	  <tagname>sqlquery</tagname>
-  //	  <object>com.dexels.navajo.adapter.SQLMap</object>
- 
   def createAdaptersTrait(name: String, packageName: String, is: InputStream, destination: File) {
     val xml = XML.load(is)
     val list = xml \\ "map"
     val maps = new ListBuffer[SymTree]()
-    list.foreach((node: Node) => {
-      val name = (node \\ "tagname").text
-      val clz = (node \\ "object").text
-      val values = (node \\ "values")
-      val methods = (node \\ "methods")
-    });
-//     BLOCK((TRAITDEF(name) withParents ("com.dexels.navajo.scala.Base")) withSelf ("self", "com.dexels.navajo.scala.ScalaCompiledScript") := BLOCK(
-//      functions)) inPackage (packageName)
-   }
-  
+    val adapters = new ListBuffer[SymTree]()
+    val adapterDefs = new ListBuffer[SymTree]()
+
+    val adaptersTrait = BLOCK(
+      List[Tree](
+        IMPORT("com.dexels.navajo.scala.document._"),
+        (TRAITDEF(name) withParents ("com.dexels.navajo.scala.BaseAdapters")) withSelf ("self", "com.dexels.navajo.scala.ScalaCompiledScript") :=
+
+          BLOCK(
+
+            for (node <- list) yield {
+              val maptag = (node \\ "tagname").text
+              val clz = (node \\ "object").text
+              val values = (node \\ "values")
+              val methods = (node \\ "methods")
+              processMap(maptag, clz, values, methods, adapterDefs)
+            }))
+
+        ++
+
+        createAdapters(list)) inPackage (packageName)
+
+    val writer = new PrintWriter(new File(destination, name + ".scala"))
+
+    writer.write(treeToString(adaptersTrait))
+    writer.close()
+  }
+
+  def createAdapters(list: NodeSeq): Iterable[Tree] = {
+    val result = new ListBuffer[Tree]
+
+    list.foreach(f => {
+      val maptag = (f \\ "tagname").text
+      val clz = (f \\ "object").text
+      val description = (f \\ "description")
+      
+      val values = (f \\ "values")
+      val methods = (f \\ "methods")
+      
+      val classDef = (CLASSDEF(maptag.toUpperCase()) withParents ("Adapter")  := BLOCK(
+        List(VAL("instance") := NEW(clz)) ++
+          createValues(values) ++
+          createMethods(methods))) withDoc(if (description.nonEmpty) description.text else "")
+          
+      result.append(classDef)
+      //       			<value name="query" type="string" required="false" direction="in" />
+
+    })
+    return result
+  }
+
+  //  			<method name="doSend">
+  //				<param name="value" field="doSend" type="boolean" required="automatic" value="true" />
+  //			</method>
+
+  def createMethods(methods: NodeSeq): Iterator[Tree] = {
+    val result = new ListBuffer[Tree]
+    (methods \\ "method").foreach(f => {
+      System.err.println(">>" + f);
+      val name = f.attribute("name").get.text
+      val params = createParams(f \\ "param")
+      result.append(
+        DEF(name) withType UnitClass withParams (params) := BLOCK())
+    })
+    return result.iterator;
+  }
+
+  def createParams(params: NodeSeq): Iterable[ValDef] = {
+    val result = new ListBuffer[ValDef]
+    (params \\ "param").foreach(f => {
+      val name = f.attribute("name").get.text
+      val field = f.attribute("field").get.text
+      val required = f.attribute("required").get.text
+      val valueType = f.attribute("type").get.text
+      //      val autoValue = f.attribute("value").get.text
+      if (required.equals("automatic")) {
+        //        result.append(
+        //        	
+        //            DEF(name) withType UnitClass := BLOCK(
+        //            REF("instance") DOT field APPLY LIT(autoValue)))
+
+      } else {
+        result.append(PARAM(name) withType ((NavajoFactory.getInstance().getJavaType(valueType).getName())))
+      }
+    })
+    return result
+  }
+  def createValues(values: NodeSeq): Iterator[Tree] = {
+    val result = new ListBuffer[Tree]
+
+    (values \\ "value").foreach(f => {
+      //System.err.println("f: " + f);
+      val name = f.attribute("name").get.text
+      val required: Boolean = !f.attribute("required").isEmpty && f.attribute("required").equals("true")
+      val isIn: Boolean = f.attribute("direction").get.text.equals("in")
+      if (f.attribute("map").isDefined) {
+        // only getters
+      } else {
+        if (f.attribute("type").isEmpty) {
+          System.err.println("weird: " + f);
+        } else {
+          val valueType = f.attribute("type").get.text
+          // create getter
+          //                    result.append(
+          //                      DEF(name) withType (NavajoFactory.getInstance().getJavaType(valueType).getName()) := BLOCK(
+          //                        RETURN(REF("instance") DOT "get" + name.capitalize APPLY UNIT)))
+
+          if (isIn) {
+            result.append(
+              DEF(name) withType UnitClass withParams (PARAM(name) withType (NavajoFactory.getInstance().getJavaType(valueType).getName())) := BLOCK(
+                //        insertOperandList.append((REF("function") DOT "insertOperand") APPLY REF("arg" + i))
+
+                REF("instance") DOT "set" + name.capitalize APPLY REF(name)))
+          }
+          // create setter
+        }
+      }
+
+      //    	val s: String = f.attribute("name").get.text
+      //      result.append(
+      //        DEF(f.attribute("name").get.text) withParams (PARAM("message") withType ("NavajoMessage"), PARAM("f") withType (IntClass TYPE_=> UnitClass)) withType (UnitClass) := BLOCK())
+    })
+    return result.iterator
+  }
+
+  def processMap(name: String, clz: String, values: NodeSeq, methods: NodeSeq, adapterDefs: ListBuffer[SymTree]): DefDef = {
+    return DEF(name) withParams (PARAM("message") withType ("NavajoMessage"), PARAM("f") withType (IntClass TYPE_=> UnitClass)) withType (UnitClass) := BLOCK(
+    		VAL("instance") := NEW(name.toUpperCase()),
+//        insertOperandList.append((REF("function") DOT "insertOperand") APPLY REF("arg" + i))
+    		REF("setupMap") APPLY (REF("message"), REF("instance"), REF("f"))
+//    		setupMap
+//    		APPLY(REF("f")) withP
+    )
+  }
+
   def createFunctionTrait(name: String, packageName: String, is: InputStream, destination: File) {
     val xml = XML.load(is)
     val list = xml \\ "function"

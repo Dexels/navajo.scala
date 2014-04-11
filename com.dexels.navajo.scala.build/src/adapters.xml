@@ -179,7 +179,7 @@
 			<value name="textContent" type="string" required="false" direction="in" />
 			<value name="contentType" type="string" required="false" direction="in" />
 			<value name="content" type="binary" required="false" direction="in" />
-			<value name="queuedsend" type="boolean" required="false" direction="in" />
+			<value name="queuedSend" type="boolean" required="false" direction="in" />
 		</values>
 		<methods>
 			<method name="doSend">
@@ -187,9 +187,7 @@
 			</method>
 		</methods>
 	</map>
-	<!-- FTP adapter -->
-	<!-- MOVED TO ENTERPRISE ADAPTERS TODO CHECK AND FIX -->
-	<!-- -->
+
 	<!-- Mail adapter -->
 	<map>
 		<tagname>mail</tagname>
@@ -233,11 +231,10 @@
 		<values>
 			<value name="mailServer" type="string" required="true" direction="in" />
 			<value name="queuedSend" type="boolean" required="false" direction="in" />
-			<value name="ignoreFailures" type="boolean" required="false" direction="in" />
-			<value name="sender" type="string" required="false" direction="in" />
+			<value name="from" type="string" required="false" direction="in" />
 			<value name="subject" type="string" required="false" direction="in" />
-			<value name="text" type="string" required="false" direction="in" />
-			<value name="recipients" type="string" required="false" direction="in" />
+			<value name="bodyText" type="string" required="false" direction="in" />
+			<value name="to" type="string" required="false" direction="in" />
 			<value name="attachment" map="attachment" required="false" direction="in" />
 			<value name="multipleAttachments" map="attachment []" required="false" direction="in" />
 			<value name="smtpUser" type="string" required="false" direction="in" />
@@ -301,7 +298,6 @@
 			<value name="block" type="boolean" required="false" direction="in" />
 			<value name="username" type="string" required="false" direction="in" />
 			<value name="password" type="string" required="false" direction="in" />
-			<value name="server" type="string" required="false" direction="in" />
 			<value name="resource" type="string" required="false" direction="in" />
 			<value name="useCurrentOutDoc" type="boolean" required="false" direction="in" />
 			<value name="useCurrentMessages" type="string" required="false" direction="in" />
@@ -556,8 +552,8 @@
 				<param name="content" field="insert" type="binary" required="true" />
 			</method>
 			<method name="setText">
-				<param name="tag" field="childName" required="true" />
-				<param name="value" field="childText" required="true" />
+				<param name="tag" field="childName" required="true"  type="string"/>
+				<param name="value" field="childText" required="true"  type="string"/>
 			</method>
 			<method name="setAttribute">
 				<param name="tag" field="childName" type="string" required="true" />
@@ -643,23 +639,23 @@
 	</map>
 
 	<map>
-		<tagname>com.dexels.navajo.adapter.AdminMap</tagname>
+		<tagname>adminMap</tagname>
 		<object>com.dexels.navajo.adapter.AdminMap</object>
 	</map>
 	<map>
-		<tagname>com.dexels.navajo.adapter.AccessMap</tagname>
+		<tagname>accessMap</tagname>
 		<object>com.dexels.navajo.adapter.AccessMap</object>
 	</map>
 	<map>
-		<tagname>com.dexels.navajo.adapter.MultipleSQLMap</tagname>
+		<tagname>multipleSQLMap</tagname>
 		<object>com.dexels.navajo.adapter.MultipleSQLMap</object>
 	</map>
 	<map>
-		<tagname>com.dexels.navajo.adapter.SelectionMap</tagname>
+		<tagname>selectionMap</tagname>
 		<object>com.dexels.navajo.adapter.SelectionMap</object>
 	</map>
 	<map>
-		<tagname>com.dexels.navajo.adapter.SequencedInsertMap</tagname>
+		<tagname>sequencedInsertMap</tagname>
 		<object>com.dexels.navajo.adapter.SequencedInsertMap</object>
 	</map>
 </adapterdef>
