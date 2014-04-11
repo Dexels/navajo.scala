@@ -67,8 +67,8 @@ object ScalaXml {
       val values = (f \\ "values")
       val methods = (f \\ "methods")
       
-      val classDef = (CLASSDEF(maptag.toUpperCase()) withParents ("Adapter")  := BLOCK(
-        List(VAL("instance") := NEW(clz)) ++
+      val classDef = (CLASSDEF(maptag.toUpperCase()) withParents ("Adapter") withParams((PARAM("instance") withType(clz)) := NEW(clz))  := BLOCK(
+        List() ++
           createValues(values) ++
           createMethods(methods))) withDoc(if (description.nonEmpty) description.text else "")
           
@@ -88,9 +88,21 @@ object ScalaXml {
     (methods \\ "method").foreach(f => {
       System.err.println(">>" + f);
       val name = f.attribute("name").get.text
-      val params = createParams(f \\ "param")
-      result.append(
-        DEF(name) withType UnitClass withParams (params) := BLOCK())
+      val valueField = f.attribute("valueField")
+      val paramNodes = f \\ "param"
+      val params = createParams(paramNodes)
+      if(valueField.isDefined) {
+          val valueType = NavajoFactory.getInstance().getJavaType(f.attribute("type").get.text).getName()
+    	  result.append(
+	        DEF(name) withType valueType withParams (params) := BLOCK(
+	        		createMethodBody(paramNodes,valueField)
+	        ))
+      } else {
+	      result.append(
+	        DEF(name) withType UnitClass withParams (params) := BLOCK(
+	        		createMethodBody(paramNodes,valueField)
+	        ))
+      }
     })
     return result.iterator;
   }
@@ -100,14 +112,9 @@ object ScalaXml {
     (params \\ "param").foreach(f => {
       val name = f.attribute("name").get.text
       val field = f.attribute("field").get.text
-      val required = f.attribute("required").get.text
       val valueType = f.attribute("type").get.text
-      //      val autoValue = f.attribute("value").get.text
+      val required = f.attribute("required").get.text
       if (required.equals("automatic")) {
-        //        result.append(
-        //        	
-        //            DEF(name) withType UnitClass := BLOCK(
-        //            REF("instance") DOT field APPLY LIT(autoValue)))
 
       } else {
         result.append(PARAM(name) withType ((NavajoFactory.getInstance().getJavaType(valueType).getName())))
@@ -115,6 +122,56 @@ object ScalaXml {
     })
     return result
   }
+
+////  			<method name="setAttribute">
+//				<param name="tag" field="childName" type="string" required="true" />
+//				<param name="attribute" field="attributeName" type="string" required="true" />
+//				<param name="value" field="attributeText" type="string" required="true" />
+//			</method>
+  def createMethodBody(values: NodeSeq, valueField: Option[Seq[Node]]): Iterable[Tree] = {
+    val result = new ListBuffer[Tree]
+    values.foreach(f=>{
+      val name = f.attribute("name").get.text
+      val fieldName = "set" + f.attribute("field").get.text.capitalize
+            val required = f.attribute("required").get.text
+      if (required.equals("automatic")) {
+         val valueType = f.attribute("type").get.text
+         val value = f.attribute("value").get.text
+         val literal = instantiateLiteral(valueType, value);
+    	 result.append(REF("instance") DOT fieldName APPLY literal )
+
+      } else {
+    	  result.append(REF("instance") DOT fieldName APPLY REF(name) )
+      }
+      if(valueField.isDefined) {
+        result.append(RETURN(REF("instance") DOT valueField.get.text))
+      }
+//      valueField="columnValue"
+                    
+    })
+    return result
+  }
+  
+  def instantiateLiteral(valueType: String,value: String): Literal = {
+		  if("boolean".equals(valueType)) {
+		    if(("true").equals(value)) {
+		      return LIT(true)
+		    }
+		    if(("false").equals(value)) {
+		      return LIT(false)
+		    }
+		  }
+    return LIT("monkey")
+  }
+  
+  
+  
+//  def withFileEntries(f: FILEENTRY => Unit): Unit = {
+//    for(i<-instance.getFileEntries()) {
+//      f(new FILEENTRY(i))
+//    }
+//  }  
+  
   def createValues(values: NodeSeq): Iterator[Tree] = {
     val result = new ListBuffer[Tree]
 
@@ -124,16 +181,33 @@ object ScalaXml {
       val required: Boolean = !f.attribute("required").isEmpty && f.attribute("required").equals("true")
       val isIn: Boolean = f.attribute("direction").get.text.equals("in")
       if (f.attribute("map").isDefined) {
+    	  val map = f.attribute("map").get.text
+    	  // does [] occuur
+    	  val parts = map.split("\\[\\]")
+    	  val str = parts(0).trim()
+
         // only getters
+        if (parts.length > 1)
+          result.append(
+            DEF("with" + name.capitalize) withType UnitClass withParams (PARAM("f") withType (TYPE_REF(str.toUpperCase()) TYPE_=> UnitClass)) := BLOCK(
+              FOR(VALFROM("i") := REF("instance") DOT "get" + name.capitalize) DO (
+                REF("f") APPLY (NEW(str.toUpperCase(), REF("i"))))))
+        else {
+          result.append(
+            DEF("with" + name.capitalize) withType UnitClass withParams (PARAM("f") withType (TYPE_REF(str.toUpperCase()) TYPE_=> UnitClass)) := BLOCK(
+                REF("f") APPLY (NEW(str.toUpperCase()))))
+
+        }
+    	  
       } else {
         if (f.attribute("type").isEmpty) {
           System.err.println("weird: " + f);
         } else {
           val valueType = f.attribute("type").get.text
           // create getter
-          //                    result.append(
-          //                      DEF(name) withType (NavajoFactory.getInstance().getJavaType(valueType).getName()) := BLOCK(
-          //                        RETURN(REF("instance") DOT "get" + name.capitalize APPLY UNIT)))
+                              result.append(
+                                DEF(name) withType (NavajoFactory.getInstance().getJavaType(valueType).getName()) := BLOCK(
+                                  RETURN(REF("instance") DOT "get" + name.capitalize  )))
 
           if (isIn) {
             result.append(
@@ -154,7 +228,7 @@ object ScalaXml {
   }
 
   def processMap(name: String, clz: String, values: NodeSeq, methods: NodeSeq, adapterDefs: ListBuffer[SymTree]): DefDef = {
-    return DEF(name) withParams (PARAM("message") withType ("NavajoMessage"), PARAM("f") withType (IntClass TYPE_=> UnitClass)) withType (UnitClass) := BLOCK(
+    return DEF(name) withParams (PARAM("message") withType ("NavajoMessage"), PARAM("f") withType (TYPE_REF(name.toUpperCase()) TYPE_=>  UnitClass)) withType (UnitClass) := BLOCK(
     		VAL("instance") := NEW(name.toUpperCase()),
 //        insertOperandList.append((REF("function") DOT "insertOperand") APPLY REF("arg" + i))
     		REF("setupMap") APPLY (REF("message"), REF("instance"), REF("f"))

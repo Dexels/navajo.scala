@@ -12,12 +12,12 @@ class TestScalaSimple extends ScalaCompiledScript with Adapters with Functions {
 //    addValidation(rt=>{
 //    })
 	val sport = a.output.addArrayMessage("Sport")
-	sqlMap(sport,a=>{
+	sqlquery(sport,a=>{
 	  a.datasource("default")
 	  a.query("SELECT DISTINCT sporttype FROM sport")
 	  a.withResultSet(result=>{
 	    sport.addMessage(m=>{
-          m.addProperty("Sport").value(result.getColumnValue("sporttype"))
+          m.addProperty("Sport").value(result.value("sporttype"))
         })
 	  })
 	})

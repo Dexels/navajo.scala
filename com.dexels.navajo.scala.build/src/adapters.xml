@@ -93,9 +93,11 @@
 			<value name="mimeType" type="string" required="false" direction="out" />
 			<value name="size" type="integer" required="false" direction="out" />
 			<value name="fileAge" type="integer" required="false" direction="out" />
-			<value name="delete" type="boolean" required="false" direction="out" />
 		</values>
 		<methods>
+			<method name="delete">
+				<param name="param" field="delete" type="boolean" value="true" required="automatic" />
+			</method>
 		</methods>
 	</map>
 
@@ -272,7 +274,7 @@
 			<!-- Append response from non-blocking called navajomap -->
 			<method name="appendResponse">
 				<param name="id" field="id" type="string" required="false" />
-				<param name="appendTo" field="appendTo" type="any" required="false" />
+				<param name="appendTo" field="appendTo" type="string" required="false" />
 				<param name="append" field="append" type="string" required="true" />
 			</method>
 			<!-- Set messagePointer for a specified NavajoMap id -->
@@ -351,7 +353,7 @@
 				<param name="inputProperties" field="inputProperties" type="string" required="false" />
 				<param name="outputProperties" field="outputProperties" type="string" required="false" />
 				<param name="block" field="block" type="boolean" required="false" />
-				<param name="name" field="doSend" type="boolean" required="true" />
+				<param name="doSend" field="doSend" type="string" required="true"  />
 				<param name="appendTo" field="appendTo" type="string" required="false" />
 				<param name="append" field="append" type="string" required="false" />
 			</method>
@@ -468,7 +470,7 @@
 				<param name="value" field="parameter" type="any" required="false" />
 			</method>
 			<method name="addOutputParameter">
-				<param name="type" field="outputParameterType" type="any" required="false" />
+				<param name="type" field="outputParameterType" type="string" required="false" />
 			</method>
 			<method name="doUpdate">
 				<param name="value" field="doUpdate" type="boolean" required="automatic" value="true" />
@@ -482,6 +484,15 @@
 		<tagname>resultrow</tagname>
 		<abstract>false</abstract>
 		<object>com.dexels.navajo.adapter.sqlmap.ResultSetMap</object>
+		<values>
+			<value name="columnName" type="string" direction="in" />
+			<value name="columnValue" type="any" direction="out" />
+		</values>
+		<methods>
+			<method name="value" type="any" valueField="columnValue">
+				<param name="name" field="columnName" type="string" required="true" />
+			</method>
+		</methods>
 	</map>
 	<!-- Audit Log adapter -->
 	<map>

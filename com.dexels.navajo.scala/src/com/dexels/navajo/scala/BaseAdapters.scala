@@ -16,4 +16,6 @@ trait BaseAdapters {
 	    map.store()	   
 	    return map.asInstanceOf[T]
 	  }
+	  
+	  def createChildArray[T<:Adapter]
 }

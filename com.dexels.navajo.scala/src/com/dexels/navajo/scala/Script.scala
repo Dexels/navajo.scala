@@ -22,13 +22,13 @@ class Script extends ScalaCompiledScript with Functions with Adapters {
       tralala.property("Mombasa")
     })
     a.output.message("Message").one(cMessage => {
-      sqlMap(cMessage,map => {
+      sqlquery(cMessage, map=> {
         map.query("aaap")
         map.datasource("sportlink")
         map.withResultSet(f => {
         	val newMsg = cMessage.addMessage("aap")
-        	newMsg.addProperty("Name").value(f.getColumnValue()).description("Booom").direction("in")
-          f.getColumnValue("a")
+        	newMsg.addProperty("Name").value(f.columnValue).description("Booom").direction("in")
+          f.value("a")
 
         })
 

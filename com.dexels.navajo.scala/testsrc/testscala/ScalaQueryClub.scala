@@ -12,7 +12,7 @@ class ScalaQueryClub extends ScalaCompiledScript with Adapters with Functions wi
 
    val clubData = runtime.output.addMessage("ClubData");
 
-    sqlMap(clubData,sql => {
+    sqlquery(clubData,sql => {
       val transactionContext = sql.transactionContext 
       var clubId = input.property("/QueryUpdateClub/ClubIdentifier")
       if (clubId == null) {
