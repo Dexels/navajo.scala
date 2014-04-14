@@ -10,54 +10,141 @@ import java.io.File
 import java.io.PrintWriter
 import com.dexels.navajo.document.NavajoFactory
 import scala.xml.NodeSeq
+import scala.xml.Elem
+import scala.io.Source
+import java.util.jar.Manifest
+import java.io.FileInputStream
 //com.dexels.navajo.functions.util
 
 object ScalaXml {
   def main(args: Array[String]) {
-    val is = ScalaXml.getClass().getClassLoader().getResourceAsStream("functions.xml");
-    createFunctionTrait("Functions", "com.dexels.navajo.scala", is, new File("/Users/frank/git/navajo.scala/com.dexels.navajo.scala/src/com/dexels/navajo/scala"))
+//    val is = ScalaXml.getClass().getClassLoader().getResourceAsStream("functions.xml");
+//    createFunctionTrait("Functions", "com.dexels.navajo.scala", is, new File("/Users/frank/git/navajo.scala/com.dexels.navajo.scala/src/com/dexels/navajo/scala"))
+//    is.close()
+
+//    val is2 = ScalaXml.getClass().getClassLoader().getResourceAsStream("adapters.xml");
+//    createAdaptersTrait("Adapters", "com.dexels.navajo.scala", is2, new File("/Users/frank/git/navajo.scala/com.dexels.navajo.scala/src/com/dexels/navajo/scala"))
+//    is2.close()
+
+//    val is3 = ScalaXml.getClass().getClassLoader().getResourceAsStream("sportlinkadapters.xml");
+//    createAdaptersTrait("SportlinkAdapters", "com.dexels.navajo.scala", is3, new File("/Users/frank/git/navajo.scala/com.dexels.navajo.scala/src/com/dexels/navajo/scala"))
+//    is3.close()
+    //createApi("Functions", "com.dexels.navajo.scala")
+    val projectFolder = new File("/Users/frank/git/navajo/server/com.dexels.navajo.adapters");
+    createScalaApi("NavajoAdapters",projectFolder)
+    
+    val sourceFolder = new File(projectFolder, "src");
+    val destFolder = new File(projectFolder, "src-gen");
+    val paths: Array[String] = Array( "com/dexels/navajo/adapter/functions/adapterfunctions.xml","com/dexels/navajo/adapter/adapters.xml");
+    
+//    createApi("Adapters", paths, sourceFolder, destFolder)
+//    createApi("Adapters", "com.dexels.navajo.scala")
+//    createApi("SportlinkAdapters", "com.dexels.navajo.scala")
+//    createApi("AdapterFunctions", "com.dexels.navajo.scala")
+//    createApi("EnterpriseAdapters", "com.dexels.navajo.scala")
+//   val man = new Manifest()
+  }
+  
+  def createScalaApi(name: String, projectFolder: File ) = {
+    val sourceFolder = new File(projectFolder,"src");
+    val sourceGenFolder = new File(projectFolder,"src-gen");
+    val manifestFile = new File(projectFolder,"META-INF/MANIFEST.MF")
+    val is = new FileInputStream(manifestFile)
+    val manifest = new Manifest()
+    manifest.read(is)
     is.close()
+    
+    val paths = new ListBuffer[File]
+    manifest.getMainAttributes().getValue("Navajo-Extension").split(",").foreach(path=>{
+      val f = new File(sourceFolder,path)
+      System.err.println(">>><<<<<<<<<<<<< "+f.getAbsolutePath);
+      paths.append(f)
+    })
+    val name =  manifest.getMainAttributes().getValue("Navajo-Name")
+    System.err.println("@@"+name);
+    createApi(name, manifest.getMainAttributes().getValue("Bundle-SymbolicName"), paths,sourceGenFolder)
+    
+  }
+  
 
-    val is2 = ScalaXml.getClass().getClassLoader().getResourceAsStream("adapters.xml");
-    createAdaptersTrait("Adapters", "com.dexels.navajo.scala", is2, new File("/Users/frank/git/navajo.scala/com.dexels.navajo.scala/src/com/dexels/navajo/scala"))
-    is2.close()
-
+  def createApi(name: String, packageDef: String, paths: Iterable[File], destination: File) = {
+    val lists = new ListBuffer[Elem]
+    for(path<-paths) {
+      System.err.println("<<<<< "+path.getAbsolutePath());
+      lists.append(XML.loadFile(path))
+    }
+    System.err.println("<><>"+lists.length);
+    createAdaptersTrait(name, packageDef, lists, destination)
+  }
+  
+  def createApi(name: String, pkg: String) = {
+    val is = ScalaXml.getClass().getClassLoader().getResourceAsStream(name.toLowerCase()+".xml");
+    val xml = XML.load(is)
+    
+    createAdaptersTrait(name, "com.dexels.navajo.scala", List(xml), new File("/Users/frank/git/navajo.scala/com.dexels.navajo.scala/src/com/dexels/navajo/scala"))
+    is.close()
   }
 
-  def createAdaptersTrait(name: String, packageName: String, is: InputStream, destination: File) {
-    val xml = XML.load(is)
-    val list = xml \\ "map"
-    val maps = new ListBuffer[SymTree]()
-    val adapters = new ListBuffer[SymTree]()
-    val adapterDefs = new ListBuffer[SymTree]()
+  def createAdaptersTrait(name: String, packageName: String, rootNodes: Iterable[Node], destination: File) {
+//    val mapnodes = rootNodes(0) \\ "map"
+      
+    val functionnodes = new ListBuffer[Node]
+    val allMaps = new ListBuffer[Node]
 
+    for(rootNode<-rootNodes) {
+      allMaps.appendAll( rootNode \\ "map")
+    }
+    for(rootNode<-rootNodes) {
+      functionnodes.appendAll( rootNode \\ "function")
+    }
+    
+//    val allnodes = List(mapnodes,functionnodes)
+    val definitions = new ListBuffer[DefDef]()
+
+    functionnodes.foreach((nodeseq: NodeSeq) => {
+      nodeseq.foreach(node=>{
+      val name = node.attribute("name").get.text
+      val clz = node.attribute("class").get.text
+      val desc = (node \\ "description").text
+      val input = (node \\ "input").text
+      val result = (node \\ "result").text
+      processFunction(name, clz, desc, input, result, definitions)
+      })
+    });
+
+//    val functionTrait = createTrait(name, packageName, functions)
+//    val writer = new PrintWriter(new File(destination, name + ".scala"))
+
+    for (node <- allMaps) {
+              val maptag = (node \\ "tagname").text
+              val clz = (node \\ "object").text
+              System.err.println("maptag:::::: "+maptag);
+              definitions.append(processMap(maptag, clz))
+            }
+    
     val adaptersTrait = BLOCK(
       List[Tree](
         IMPORT("com.dexels.navajo.scala.document._"),
-        (TRAITDEF(name) withParents ("com.dexels.navajo.scala.BaseAdapters")) withSelf ("self", "com.dexels.navajo.scala.ScalaCompiledScript") :=
-
+        (TRAITDEF(name) withParents ("com.dexels.navajo.scala.BaseAdapters" , "com.dexels.navajo.scala.Base")) withSelf ("self", "com.dexels.navajo.scala.ScalaCompiledScript") :=
           BLOCK(
+        		  
+            definitions
+          )) ++
 
-            for (node <- list) yield {
-              val maptag = (node \\ "tagname").text
-              val clz = (node \\ "object").text
-              val values = (node \\ "values")
-              val methods = (node \\ "methods")
-              processMap(maptag, clz, values, methods, adapterDefs)
-            }))
+        createAdapters(allMaps)) inPackage (packageName)
 
-        ++
-
-        createAdapters(list)) inPackage (packageName)
-
+    if(!destination.exists) {
+      destination.mkdirs
+    }
     val writer = new PrintWriter(new File(destination, name + ".scala"))
 
     writer.write(treeToString(adaptersTrait))
     writer.close()
   }
 
-  def createAdapters(list: NodeSeq): Iterable[Tree] = {
+  def createAdapters(nodeseqlist: Iterable[NodeSeq]): Iterable[Tree] = {
     val result = new ListBuffer[Tree]
+    nodeseqlist.foreach(list => {
 
     list.foreach(f => {
       val maptag = (f \\ "tagname").text
@@ -73,9 +160,9 @@ object ScalaXml {
           createMethods(methods))) withDoc(if (description.nonEmpty) description.text else "")
           
       result.append(classDef)
-      //       			<value name="query" type="string" required="false" direction="in" />
-
     })
+    })
+    
     return result
   }
 
@@ -205,6 +292,7 @@ object ScalaXml {
         } else {
           val valueType = f.attribute("type").get.text
           // create getter
+          System.err.println("name: "+name+" type: "+valueType);
                               result.append(
                                 DEF(name) withType (NavajoFactory.getInstance().getJavaType(valueType).getName()) := BLOCK(
                                   RETURN(REF("instance") DOT "get" + name.capitalize  )))
@@ -227,7 +315,7 @@ object ScalaXml {
     return result.iterator
   }
 
-  def processMap(name: String, clz: String, values: NodeSeq, methods: NodeSeq, adapterDefs: ListBuffer[SymTree]): DefDef = {
+  def processMap(name: String, clz: String): DefDef = {
     return DEF(name) withParams (PARAM("message") withType ("NavajoMessage"), PARAM("f") withType (TYPE_REF(name.toUpperCase()) TYPE_=>  UnitClass)) withType (UnitClass) := BLOCK(
     		VAL("instance") := NEW(name.toUpperCase()),
 //        insertOperandList.append((REF("function") DOT "insertOperand") APPLY REF("arg" + i))
@@ -237,57 +325,8 @@ object ScalaXml {
     )
   }
 
-  def createFunctionTrait(name: String, packageName: String, is: InputStream, destination: File) {
-    val xml = XML.load(is)
-    val list = xml \\ "function"
-    val functions = new ListBuffer[SymTree]()
 
-    list.foreach((node: Node) => {
-      val name = node.attribute("name").get.text
-      val clz = node.attribute("class").get.text
-      val desc = (node \\ "description").text
-      val input = (node \\ "input").text
-      val result = (node \\ "result").text
-      processFunction(name, clz, desc, input, result, functions)
-    });
-
-    val functionTrait = createTrait(name, packageName, functions)
-    val writer = new PrintWriter(new File(destination, name + ".scala"))
-
-    writer.write(treeToString(functionTrait))
-    writer.close()
-
-  }
-
-  def addMethodToTrait(functionTrait: ClassDef, name: String, clz: String) = {
-    //    functionTrait.withComment("aap").
-    //functionTrait.
-  }
-  //  	def toSecureImage (input:String): Binary = {
-  //	  val function = setupFunction(new com.dexels.navajo.functions.ToSecureImage())
-  //	  function.insertOperand(input)
-  //	  function.evaluate().asInstanceOf[Binary]
-  //	}
-
-  //  	<function name="StoreBinary" class="com.dexels.navajo.functions.StoreBinary">
-  //		<description>Store a binary object in Shared Store
-  //		</description>
-  //		<input>string, binary</input>
-  //		<result>string</result>
-  //	</function> 
-  // 	<function name="Abs" class="com.dexels.navajo.functions.Abs">
-  //		<description>Returns absolute value of a number</description>
-  //		<input>float|integer</input>
-  //		<result>integer|float</result>
-  //	</function>
-
-  //	def toSecureImage (input:String): Binary = {
-  //	  val function = setupFunction(new com.dexels.navajo.functions.ToSecureImage())
-  //	  function.insertOperand(input)
-  //	  function.evaluate().asInstanceOf[Binary]
-  //	}
-
-  def processFunction(name: String, clz: String, desc: String, input: String, result: String, functions: ListBuffer[SymTree]): Unit = {
+  def processFunction(name: String, clz: String, desc: String, input: String, result: String, functions: ListBuffer[DefDef]): Unit = {
     if (input.indexOf("...") != -1) {
       System.err.println("Currying! TODO implement");
       return
@@ -364,9 +403,5 @@ object ScalaXml {
     })
   }
 
-  def createTrait(name: String, packageName: String, functions: ListBuffer[SymTree]): PackageDef = {
-    return BLOCK((TRAITDEF(name) withParents ("com.dexels.navajo.scala.Base")) withSelf ("self", "com.dexels.navajo.scala.ScalaCompiledScript") := BLOCK(
-      functions)) inPackage (packageName)
-  }
 
 } 

@@ -2,7 +2,7 @@ package com.dexels.navajo.scala
 
 import com.dexels.navajo.scala.document._
 
-trait Adapters extends com.dexels.navajo.scala.BaseAdapters { self: com.dexels.navajo.scala.ScalaCompiledScript => 
+trait Adapters extends com.dexels.navajo.scala.BaseAdapters with com.dexels.navajo.scala.Base { self: com.dexels.navajo.scala.ScalaCompiledScript => 
   def testadapter(message: NavajoMessage, f: TESTADAPTER => Unit): Unit = {
     val instance = new TESTADAPTER
     setupMap(message, instance, f)

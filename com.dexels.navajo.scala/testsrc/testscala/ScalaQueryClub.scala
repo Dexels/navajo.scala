@@ -5,8 +5,10 @@ import com.dexels.navajo.scala.document.NavajoRuntime
 import com.dexels.navajo.scala.Adapters
 import com.dexels.navajo.scala.Functions
 import com.dexels.navajo.scala.SportlinkAdapters
+import com.dexels.navajo.adapter.functions.SingleValueQuery
+import com.dexels.navajo.scala.AdapterFunctions
 
-class ScalaQueryClub extends ScalaCompiledScript with Adapters with Functions with SportlinkAdapters {
+class ScalaQueryClub extends ScalaCompiledScript with Adapters with Functions with AdapterFunctions with SportlinkAdapters {
 
   override def run(runtime: NavajoRuntime) {
 
@@ -19,7 +21,7 @@ class ScalaQueryClub extends ScalaCompiledScript with Adapters with Functions wi
         clubId = input.property("/Club/ClubIdentifier")
       }
       sql.datasource("sportlinkkernel")
-      val codeDropdownLanguage = singleValueQuery(transactionContext, "SELECT get_default_language() FROM dual").asInstanceOf[String]
+      val codeDropdownLanguage = SingleValueQuery(transactionContext, "SELECT get_default_language() FROM dual").asInstanceOf[String]
       sql.query("""SELECT vw_club.name
                  , vw_club.shortname
                  , vw_club.activeentity
