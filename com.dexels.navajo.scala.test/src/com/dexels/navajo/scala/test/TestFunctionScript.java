@@ -1,4 +1,4 @@
-package com.dexels.navajo.scala;
+package com.dexels.navajo.scala.test;
 
 import static org.junit.Assert.*;
 

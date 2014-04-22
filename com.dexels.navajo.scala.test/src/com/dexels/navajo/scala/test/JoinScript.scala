@@ -1,6 +1,7 @@
-package com.dexels.navajo.scala
+package com.dexels.navajo.scala.test
 
 import com.dexels.navajo.scala.document.NavajoRuntime
+import com.dexels.navajo.scala.ScalaCompiledScript
 
 class JoinScript extends ScalaCompiledScript {
   override def run(a: NavajoRuntime) {

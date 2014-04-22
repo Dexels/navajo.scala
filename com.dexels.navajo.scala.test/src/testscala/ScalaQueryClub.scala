@@ -2,13 +2,10 @@ package testscala
 
 import com.dexels.navajo.scala.ScalaCompiledScript
 import com.dexels.navajo.scala.document.NavajoRuntime
-import com.dexels.navajo.scala.Adapters
-import com.dexels.navajo.scala.Functions
-import com.dexels.navajo.scala.SportlinkAdapters
 import com.dexels.navajo.adapter.functions.SingleValueQuery
-import com.dexels.navajo.scala.AdapterFunctions
+import navajo.navajoadapters._
 
-class ScalaQueryClub extends ScalaCompiledScript with Adapters with Functions with AdapterFunctions with SportlinkAdapters {
+class ScalaQueryClub extends ScalaCompiledScript with NavajoAdapters with SportlinkAdapters {
 
   override def run(runtime: NavajoRuntime) {
 

@@ -1,4 +1,4 @@
-package com.dexels.navajo.scala;
+package com.dexels.navajo.scala.test;
 
 import java.io.InputStream;
 import java.util.HashMap;

@@ -6,10 +6,10 @@ import com.dexels.navajo.scala.document.NavajoProperty
 class ValidationContext(val runtime: NavajoRuntime) {
 
   def fail(code: Int) {
-	  
-	}
-	
-	def property(path: String): NavajoProperty = {
-	  runtime.input.property(path)
-	}
+
+  }
+
+  def property(path: String): NavajoProperty = {
+    runtime.input.property(path)
+  }
 }

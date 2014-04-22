@@ -30,12 +30,13 @@ object ScalaXml {
 //    createAdaptersTrait("SportlinkAdapters", "com.dexels.navajo.scala", is3, new File("/Users/frank/git/navajo.scala/com.dexels.navajo.scala/src/com/dexels/navajo/scala"))
 //    is3.close()
     //createApi("Functions", "com.dexels.navajo.scala")
-    val projectFolder = new File("/Users/frank/git/navajo/server/com.dexels.navajo.adapters");
-    createScalaApi("NavajoAdapters",projectFolder)
+    createScalaApi(new File("/Users/frank/git/navajo/server/com.dexels.navajo.adapters"))
+    createScalaApi(new File("/Users/frank/git/navajo/core/com.dexels.navajo.function"))
+//    createScalaApi("NavajoAdapters",new File("/Users/frank/git/navajo/server/com.dexels.navajo.adapters"))
     
-    val sourceFolder = new File(projectFolder, "src");
-    val destFolder = new File(projectFolder, "src-gen");
-    val paths: Array[String] = Array( "com/dexels/navajo/adapter/functions/adapterfunctions.xml","com/dexels/navajo/adapter/adapters.xml");
+//    val sourceFolder = new File(projectFolder, "src");
+//    val destFolder = new File(projectFolder, "src-gen");
+//    val paths: Array[String] = Array( "com/dexels/navajo/adapter/functions/adapterfunctions.xml","com/dexels/navajo/adapter/adapters.xml");
     
 //    createApi("Adapters", paths, sourceFolder, destFolder)
 //    createApi("Adapters", "com.dexels.navajo.scala")
@@ -45,7 +46,7 @@ object ScalaXml {
 //   val man = new Manifest()
   }
   
-  def createScalaApi(name: String, projectFolder: File ) = {
+  def createScalaApi(projectFolder: File ) = {
     val sourceFolder = new File(projectFolder,"src");
     val sourceGenFolder = new File(projectFolder,"src-gen");
     val manifestFile = new File(projectFolder,"META-INF/MANIFEST.MF")
@@ -62,7 +63,7 @@ object ScalaXml {
     })
     val name =  manifest.getMainAttributes().getValue("Navajo-Name")
     System.err.println("@@"+name);
-    createApi(name, manifest.getMainAttributes().getValue("Bundle-SymbolicName"), paths,sourceGenFolder)
+    createApi(name,"navajo."+name.toLowerCase(), paths,sourceGenFolder)
     
   }
   
@@ -77,13 +78,6 @@ object ScalaXml {
     createAdaptersTrait(name, packageDef, lists, destination)
   }
   
-  def createApi(name: String, pkg: String) = {
-    val is = ScalaXml.getClass().getClassLoader().getResourceAsStream(name.toLowerCase()+".xml");
-    val xml = XML.load(is)
-    
-    createAdaptersTrait(name, "com.dexels.navajo.scala", List(xml), new File("/Users/frank/git/navajo.scala/com.dexels.navajo.scala/src/com/dexels/navajo/scala"))
-    is.close()
-  }
 
   def createAdaptersTrait(name: String, packageName: String, rootNodes: Iterable[Node], destination: File) {
 //    val mapnodes = rootNodes(0) \\ "map"
@@ -125,6 +119,7 @@ object ScalaXml {
     val adaptersTrait = BLOCK(
       List[Tree](
         IMPORT("com.dexels.navajo.scala.document._"),
+        IMPORT("com.dexels.navajo.scala._"),
         (TRAITDEF(name) withParents ("com.dexels.navajo.scala.BaseAdapters" , "com.dexels.navajo.scala.Base")) withSelf ("self", "com.dexels.navajo.scala.ScalaCompiledScript") :=
           BLOCK(
         		  

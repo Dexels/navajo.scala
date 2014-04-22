@@ -8,20 +8,12 @@ Export-Package: com.dexels.navajo.scala,
  com.dexels.navajo.scala.document
 Bundle-Vendor: Dexels
 Bundle-ClassPath: .
-Import-Package: com.dexels.navajo.adapter,
- com.dexels.navajo.adapter.sqlmap,
- com.dexels.navajo.client;version="1.0.0",
+Import-Package: com.dexels.navajo.client;version="1.0.0",
  com.dexels.navajo.document;version="2.2.0",
  com.dexels.navajo.document.types;version="2.2.1",
- com.dexels.navajo.enterprise.adapter,
- com.dexels.navajo.functions;version="3.1.7",
- com.dexels.navajo.integrity,
  com.dexels.navajo.mapping,
- com.dexels.navajo.mapping.compiler.meta,
  com.dexels.navajo.script.api;version="1.0.0",
  com.dexels.navajo.server,
- com.dexels.sportlink.adapters,
- org.dexels.grus;version="1.0.0",
  org.junit;version="4.8.2";resolution:=optional,
  org.slf4j;version="1.7.5",
  scala;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d",
@@ -37,4 +29,3 @@ Import-Package: com.dexels.navajo.adapter,
  scala.collection.script;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d",
  scala.runtime;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d"
 Service-Component: OSGI-INF/script.xml
-Require-Bundle: com.dexels.navajo.adapters;bundle-version="2.0.9"

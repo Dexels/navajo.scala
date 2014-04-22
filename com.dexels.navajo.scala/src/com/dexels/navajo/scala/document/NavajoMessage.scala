@@ -37,8 +37,8 @@ class NavajoMessage(val parent: Message) {
     parent.addElement(message.parent)
     return message
   }
-  
-    def addMessage(f: NavajoMessage=>Unit): NavajoMessage = {
+
+  def addMessage(f: NavajoMessage => Unit): NavajoMessage = {
     val message = NavajoFactory.createMessage(rootDoc, this.name)
     parent.addElement(message.parent)
     f(message)
@@ -91,14 +91,13 @@ class NavajoMessage(val parent: Message) {
   }
 
   def propertyValue(name: String): Any = {
-		val p = property(name)
-		if(p==null) {
-		  return null
-		}
-		return p.value
+    val p = property(name)
+    if (p == null) {
+      return null
+    }
+    return p.value
   }
-  
-  
+
   //    public abstract Property createProperty(Navajo tb, String name, String type,
   //                                          String value, int length,
   //                                          String description, String direction) throws

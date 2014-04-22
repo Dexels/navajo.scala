@@ -1,11 +1,11 @@
 package testscala
 
-import com.dexels.navajo.scala.ScalaCompiledScript
+import navajo.navajoadapters.NavajoAdapters
+import com.dexels.navajo.scala._
 import com.dexels.navajo.scala.document.NavajoRuntime
-import com.dexels.navajo.scala.Adapters
-import com.dexels.navajo.scala.Functions
 
-class TestScalaSimple extends ScalaCompiledScript with Adapters with Functions {
+
+class TestScalaSimple extends ScalaCompiledScript with NavajoAdapters {
    
   override def run(a: NavajoRuntime) {
 

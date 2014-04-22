@@ -4,17 +4,17 @@ import com.dexels.navajo.parser._
 import com.dexels.navajo.document.types.Money
 
 trait Base {
-  self : ScalaCompiledScript =>
-	
-	def setupFunction(func: FunctionInterface): FunctionInterface = {
-	  
-	  func.reset
-	  func.setAccess(scriptAccess)
-	  
-	  func.setCurrentMessage(getCurrentOutMsg())
-	  func.setInMessage(scriptAccess.getInDoc())
-//	  func.setOutMessage(this.getAccess().getInDoc())
-	  func.setCurrentMessage(getCurrentOutMsg())
-	  return func
-	}
+  self: ScalaCompiledScript =>
+
+  def setupFunction(func: FunctionInterface): FunctionInterface = {
+
+    func.reset
+    func.setAccess(scriptAccess)
+
+    func.setCurrentMessage(getCurrentOutMsg())
+    func.setInMessage(scriptAccess.getInDoc())
+    //	  func.setOutMessage(this.getAccess().getInDoc())
+    func.setCurrentMessage(getCurrentOutMsg())
+    return func
+  }
 }

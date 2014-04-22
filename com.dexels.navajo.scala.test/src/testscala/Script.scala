@@ -6,8 +6,9 @@ import com.dexels.navajo.scala.document.NavajoFactory
 import com.dexels.navajo.scala.document.NavajoRuntime
 import com.dexels.navajo.scala.document.NavajoMessage
 import com.dexels.navajo.functions.ToSecureImage
+import navajo.navajoadapters.NavajoAdapters
 
-class Script extends ScalaCompiledScript with Functions with Adapters {
+class Script extends ScalaCompiledScript with Functions with NavajoAdapters {
 
   override def run(a: NavajoRuntime) {
      ToSecureImage("aap");
