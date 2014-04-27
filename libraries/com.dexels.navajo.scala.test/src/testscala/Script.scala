@@ -6,9 +6,10 @@ import com.dexels.navajo.scala.document.NavajoFactory
 import com.dexels.navajo.scala.document.NavajoRuntime
 import com.dexels.navajo.scala.document.NavajoMessage
 import com.dexels.navajo.functions.ToSecureImage
-import navajo.navajoadapters.NavajoAdapters
+import com.dexels.navajo.function.scala.api.FunctionComponent
+import com.dexels.navajo.adapters.scala.api.AdaptersComponent
 
-class Script extends ScalaCompiledScript with Functions with NavajoAdapters {
+class Script extends ScalaCompiledScript with FunctionComponent with AdaptersComponent {
 
   override def run(a: NavajoRuntime) {
      ToSecureImage("aap");
@@ -26,7 +27,7 @@ class Script extends ScalaCompiledScript with Functions with NavajoAdapters {
       sqlquery(cMessage, map=> {
         map.query("aaap")
         map.datasource("sportlink")
-        map.withResultSet(f => {
+        map.withEachResultSet(f => {
         	val newMsg = cMessage.addMessage("aap")
         	newMsg.addProperty("Name").value(f.columnValue).description("Booom").direction("in")
           f.value("a")

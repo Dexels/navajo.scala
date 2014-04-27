@@ -7,15 +7,20 @@ Bundle-Vendor: Dexels
 Bundle-ClassPath: .
 Import-Package: com.dexels.navajo.adapter,
  com.dexels.navajo.adapter.functions,
- com.dexels.navajo.adapters.scala,
+ com.dexels.navajo.adapters.scala.api;version="2.0.13.qualifier",
  com.dexels.navajo.document;version="2.2.0",
  com.dexels.navajo.document.types;version="2.2.0",
+ com.dexels.navajo.function.pdf.scala.api;version="1.0.13.qualifier",
+ com.dexels.navajo.function.scala.api;version="3.2.5.qualifier",
  com.dexels.navajo.functions,
  com.dexels.navajo.mapping,
  com.dexels.navajo.scala,
  com.dexels.navajo.scala.document,
  com.dexels.navajo.script.api;version="1.0.0",
- navajo.navajoadapters;version="2.0.13.qualifier",
+ com.sportlink.adapters.scala.api;version="3.0.13.qualifier",
+ com.sportlink.comp.scala.api;version="3.0.3.qualifier",
+ com.sportlink.financial.adapters.scala.api;version="3.0.3.qualifier",
+ com.sportlink.financial.functions.scala.api;version="3.0.3.qualifier",
  org.junit;version="4.8.2";resolution:=optional,
  org.slf4j;version="[1.6.1,1.8.0)"
 Service-Component: OSGI-INF/script.xml

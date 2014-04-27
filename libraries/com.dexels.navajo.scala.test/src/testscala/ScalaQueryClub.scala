@@ -3,9 +3,12 @@ package testscala
 import com.dexels.navajo.scala.ScalaCompiledScript
 import com.dexels.navajo.scala.document.NavajoRuntime
 import com.dexels.navajo.adapter.functions.SingleValueQuery
-import navajo.navajoadapters._
+import com.dexels.navajo.adapters.scala.api.AdaptersComponent
+import com.sportlink.adapters.scala.api.SportlinkAdaptersComponent
+import com.dexels.navajo.function.scala.api.FunctionComponent
+import com.dexels.navajo.adapters.scala.api.AdaptersComponent
 
-class ScalaQueryClub extends ScalaCompiledScript with NavajoAdapters with SportlinkAdapters {
+class ScalaQueryClub extends ScalaCompiledScript with AdaptersComponent with SportlinkAdaptersComponent with FunctionComponent {
 
   override def run(runtime: NavajoRuntime) {
 
