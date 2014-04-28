@@ -123,32 +123,32 @@ class ScalaQueryClub extends ScalaCompiledScript with AdaptersComponent with Spo
             AND    vw_club.organizationid = ?""")
       sql.addParameter(clubId)
 
-      sql.withResultSet(result => {
-        val parentOrganizationId = result.getColumnValue("parentorganizationid").asInstanceOf[String]
-        val SelectedRegionIndoor = result.getColumnValue("zaalregio")
-        val selectedRegion = result.getColumnValue("veldregio")
+      sql.withEachResultSet(result => {
+        val parentOrganizationId = result.value("parentorganizationid").asInstanceOf[String]
+        val SelectedRegionIndoor = result.value("zaalregio")
+        val selectedRegion = result.value("veldregio")
         var playingRegionTable = "BOND_PLAYING_REGION";
         if (parentOrganizationId.indexOf("-") != -1) {
           val elements = parentOrganizationId.split("-")
           playingRegionTable = elements(2) + "_PLAYING_REGION"
         }
-        val dissolutionDate = result.getColumnValue("dissolveddt")
-        clubData.addProperty("TypeOfOrganization").description("Clubtype").value(result.getColumnValue("typeoforganization"))
+        val dissolutionDate = result.value("dissolveddt")
+        clubData.addProperty("TypeOfOrganization").description("Clubtype").value(result.value("typeoforganization"))
         clubData.addProperty("ClubIdentifier").description("Clubcode").value(clubId)
-        clubData.addProperty("UnionName").description("Bond").value(trim(result.getColumnValue("unionname").asInstanceOf[String]))
-        clubData.addProperty("UnionShortName").description("Bond (kort)").value(trim(result.getColumnValue("unionshortname").asInstanceOf[String]))
-        clubData.addProperty("RegionOwner").description("District").value(trim(parentOrganizationId))
-        clubData.addProperty("RegionOwnerName").description("District").value(trim(result.getColumnValue("parentorganizationname").asInstanceOf[String]))
-        clubData.addProperty("ClubName").description("Clubnaam").value(trim(result.getColumnValue("name").asInstanceOf[String]))
-        clubData.addProperty("ClubShortName").description("Verkorte naam").value(trim(result.getColumnValue("shortname").asInstanceOf[String]))
-        val typeOfClub = trim(result.getColumnValue("typeofclub").asInstanceOf[String])
-        codedropdown(clubData, codedropdown => {
-          codedropdown.transactioncontext(transactionContext).description("ClubType").name("TypeOfClub").direction("in").typeOfCode("CLUB_TYPE").language(codeDropdownLanguage)
+        clubData.addProperty("UnionName").description("Bond").value(Trim(result.value("unionname").asInstanceOf[String]))
+        clubData.addProperty("UnionShortName").description("Bond (kort)").value(Trim(result.value("unionshortname").asInstanceOf[String]))
+        clubData.addProperty("RegionOwner").description("District").value(Trim(parentOrganizationId))
+        clubData.addProperty("RegionOwnerName").description("District").value(Trim(result.value("parentorganizationname").asInstanceOf[String]))
+        clubData.addProperty("ClubName").description("Clubnaam").value(Trim(result.value("name").asInstanceOf[String]))
+        clubData.addProperty("ClubShortName").description("Verkorte naam").value(Trim(result.value("shortname").asInstanceOf[String]))
+        val typeOfClub: String = Trim(result.value("typeofclub").asInstanceOf[String])
+        codedropdown(clubData, d => {
+          d.transactionContext(transactionContext).description("ClubType").name("TypeOfClub").direction("in").typeOfCode("CLUB_TYPE").language(codeDropdownLanguage)
             .selectedValue(typeOfClub).emptyOption(true).orderByDescription(true)
            
         })
-        clubData.addProperty("CategoryOfClub").length(32).direction("in").propertyType("string").value(trim(result.getColumnValue("categoryofclub").asInstanceOf[String]))
-        clubData.addProperty("Zoeknaam").direction("in").length(15).subtype("capitalization=upper").value(trim(result.getColumnValue("searchname").asInstanceOf[String]))
+        clubData.addProperty("CategoryOfClub").length(32).direction("in").propertyType("string").value(Trim(result.value("categoryofclub").asInstanceOf[String]))
+        clubData.addProperty("Zoeknaam").direction("in").length(15).subtype("capitalization=upper").value(Trim(result.value("searchname").asInstanceOf[String]))
       })
 
     })
