@@ -29,20 +29,20 @@ import scala.xml.PrettyPrinter
 object ScalaXml {
   def main(args: Array[String]) {
    
-//    val navajopaths = Array("server/com.dexels.navajo.adapters", "core/com.dexels.navajo.function", "core/com.dexels.navajo.core",
-//      "server/com.dexels.navajo.entity", "example/com.dexels.navajo.example.adapter", "optional/com.dexels.navajo.function.pdf",
-//      "server/com.dexels.navajo.adapters.eventemitter", "optional/com.dexels.navajo.kml", "optional/com.dexels.navajo.twitter")
+    val navajopaths = Array("server/com.dexels.navajo.adapters", "core/com.dexels.navajo.function", "core/com.dexels.navajo.core",
+      "server/com.dexels.navajo.entity", "example/com.dexels.navajo.example.adapter", "optional/com.dexels.navajo.function.pdf",
+      "server/com.dexels.navajo.adapters.eventemitter", "optional/com.dexels.navajo.kml", "optional/com.dexels.navajo.twitter")
 
-          val navajopaths = Array("server/com.dexels.navajo.adapters")
+//          val navajopaths = Array("server/com.dexels.navajo.adapters")
 
       
     createScalaFragmentGroup(navajopaths, new File("/Users/frank/git/navajo"), new File("/Users/frank/git/navajo.scala/generated"))
 
-//    val enterprisepaths = Array("enterprise/com.dexels.navajo.enterprise", "enterprise/com.dexels.navajo.enterprise.adapters", "enterprise/com.dexels.navajo.enterprise.cluster", "enterprise/com.dexels.navajo.enterprise.hazelcast", "enterprise/com.dexels.navajo.enterprise.lucene", "enterprise/com.dexels.navajo.mongo")
-//    createScalaFragmentGroup(enterprisepaths, new File("/Users/frank/git/enterprise"), new File("/Users/frank/git/navajo.scala/generated"))
-//
-//    val sportlinkpaths = Array("libraries/com.sportlink.adapters", "libraries/com.sportlink.comp", "libraries/com.sportlink.financial.adapters", "libraries/com.sportlink.financial.functions")
-//    createScalaFragmentGroup(sportlinkpaths, new File("/Users/frank/git/sportlink.library"), new File("/Users/frank/git/navajo.scala/generated"))
+    val enterprisepaths = Array("enterprise/com.dexels.navajo.enterprise", "enterprise/com.dexels.navajo.enterprise.adapters", "enterprise/com.dexels.navajo.enterprise.cluster", "enterprise/com.dexels.navajo.enterprise.hazelcast", "enterprise/com.dexels.navajo.enterprise.lucene", "enterprise/com.dexels.navajo.mongo")
+    createScalaFragmentGroup(enterprisepaths, new File("/Users/frank/git/enterprise"), new File("/Users/frank/git/navajo.scala/generated"))
+
+    val sportlinkpaths = Array("libraries/com.sportlink.adapters", "libraries/com.sportlink.comp", "libraries/com.sportlink.financial.adapters", "libraries/com.sportlink.financial.functions")
+    createScalaFragmentGroup(sportlinkpaths, new File("/Users/frank/git/sportlink.library"), new File("/Users/frank/git/navajo.scala/generated"))
 
   }
 
@@ -347,7 +347,7 @@ object ScalaXml {
   private def createClassDef(maptag: String, clz: String, values: NodeSeq, methods: NodeSeq, description: NodeSeq): Tree = {
     val classDef = (CLASSDEF(maptag.toUpperCase()) withParents ("Adapter") withParams ((PARAM("instance") withType (clz)) := NEW(clz)) := BLOCK(
       List() ++
-        createValues(values) ++
+        createValues(maptag.toUpperCase(), values) ++
         createMethods(methods)))
 
     return classDef
@@ -356,7 +356,7 @@ object ScalaXml {
   private def createAbstractClassDef(maptag: String, clz: String, values: NodeSeq, methods: NodeSeq, description: NodeSeq): Tree = {
     val classDef = (CLASSDEF(maptag.toUpperCase()) withParents ("Adapter") withParams ((PARAM("instance") withType (clz))) := BLOCK(
       List() ++
-        createValues(values) ++
+        createValues(maptag.toUpperCase(),values) ++
         createMethods(methods)))
 
     return classDef
@@ -450,7 +450,7 @@ object ScalaXml {
   //    }
   //  }  
 
-  def createValues(values: NodeSeq): Iterator[Tree] = {
+  def createValues(adapterType: String, values: NodeSeq): Iterator[Tree] = {
     val result = new ListBuffer[Tree]
 
     (values \\ "value").foreach(f => {
@@ -467,13 +467,18 @@ object ScalaXml {
         // only getters
         if (isArray)
           result.append(
-            DEF("withEach" + name.capitalize) withType UnitClass withParams (PARAM("f") withType (TYPE_REF(str.toUpperCase()) TYPE_=> UnitClass)) := BLOCK(
+            DEF("withEach" + name.capitalize) withType TYPE_REF(adapterType) withParams (PARAM("f") withType (TYPE_REF(str.toUpperCase()) TYPE_=> UnitClass)) := BLOCK(
               FOR(VALFROM("i") := REF("instance") DOT "get" + name.capitalize) DO (
-                REF("f") APPLY (NEW(str.toUpperCase(), REF("i"))))))
+                REF("f") APPLY (NEW(str.toUpperCase(), REF("i")))),
+              RETURN(THIS)  
+            ))
         else {
           result.append(
-            DEF("with" + name.capitalize) withType UnitClass withParams (PARAM("f") withType (TYPE_REF(str.toUpperCase()) TYPE_=> UnitClass)) := BLOCK(
-              REF("f") APPLY (NEW(str.toUpperCase(), REF("instance") DOT "get" + name.capitalize))))
+            DEF("with" + name.capitalize) withType TYPE_REF(adapterType) withParams (PARAM("f") withType (TYPE_REF(str.toUpperCase()) TYPE_=> UnitClass)) := BLOCK(
+              REF("f") APPLY (NEW(str.toUpperCase(), REF("instance") DOT "get" + name.capitalize)
+                
+              ), RETURN(THIS) 
+              ))
 
         }
 
@@ -489,10 +494,12 @@ object ScalaXml {
 
           if (isIn) {
             result.append(
-              DEF(name) withType UnitClass withParams (PARAM(name) withType (NavajoFactory.getInstance().getJavaType(valueType).getName())) := BLOCK(
+              DEF(name) withType TYPE_REF(adapterType) withParams (PARAM(name) withType (NavajoFactory.getInstance().getJavaType(valueType).getName())) := BLOCK(
                 //        insertOperandList.append((REF("function") DOT "insertOperand") APPLY REF("arg" + i))
 
-                REF("instance") DOT "set" + name.capitalize APPLY REF(name)))
+                REF("instance") DOT "set" + name.capitalize APPLY REF(name),
+                RETURN(THIS)
+              ))
           }
           // create setter
         }
@@ -562,9 +569,28 @@ object ScalaXml {
         i += 1
       })
       functions.append(
-        DEF(name) withParams (paramList) := BLOCK(
-          insertOperandList))
+        DEF(name) withType evaluateReturnType(result) withParams (paramList)  := BLOCK(
+          insertOperandList ++ List[Tree]( REF("function") DOT "evaluate" APPLY () AS evaluateReturnType(result) )))
     })
+  }
+  
+  private def evaluateReturnType(xmlValue: String) : String = {
+    if(xmlValue ==null || "".equals(xmlValue)) {
+      return "Any"
+    }
+    if(xmlValue.indexOf("|")!= -1) {
+      return "Any"
+    }
+    System.err.println("xmlValue: "+xmlValue);
+    if(xmlValue.equals("list")) {
+      return "List[Any]"
+    }
+    val valueType = NavajoFactory.getInstance().getJavaType(xmlValue)
+    if(valueType!=null) {
+      return valueType.getName();
+    }
+    return "Any"
+    
   }
 
   def expandParams(parameters: String): ListBuffer[List[String]] = {
