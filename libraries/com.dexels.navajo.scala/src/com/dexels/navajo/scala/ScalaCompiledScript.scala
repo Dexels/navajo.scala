@@ -6,10 +6,13 @@ import com.dexels.navajo.script.api.Access
 import com.dexels.navajo.script.api.Mappable
 import com.dexels.navajo.scala.document.NavajoDocument
 import com.dexels.navajo.scala.document.NavajoRuntime
-import com.dexels.navajo.scala.document.NavajoRuntime
 import scala.collection.mutable.ListBuffer
+import com.dexels.navajo.document.NavajoFactory
+import com.dexels.navajo.document.NavajoFactory
+
 abstract class ScalaCompiledScript extends CompiledScript {
   var runtime: NavajoRuntime = null
+  
   val validations = new ListBuffer[NavajoRuntime => Boolean]
 
   override def finalBlock(a: Access) {
@@ -25,11 +28,12 @@ abstract class ScalaCompiledScript extends CompiledScript {
   }
 
   override def execute(a: Access) {
-    runtime = new NavajoRuntime(scriptAccess)
-    run(runtime)
+    myAccess = a
+    runtime = new NavajoRuntime(a)
+    run()
   }
 
-  def run(r: NavajoRuntime)
+  def run()
 
   def callScript(input: NavajoDocument, withResult: NavajoDocument => Unit) {
 
@@ -43,10 +47,14 @@ abstract class ScalaCompiledScript extends CompiledScript {
 
   }
 
-  def input: NavajoDocument = {
-    new NavajoDocument(getInDoc());
+  def input[T <: NavajoDocument] : T = {
+    new NavajoDocument(myAccess.getInDoc()).asInstanceOf[T];
   }
 
+  def output[T <: NavajoDocument] : T = {
+     new NavajoDocument(myAccess.getOutputDoc()).asInstanceOf[T];
+  }
+    
   def scriptAccess: Access = {
     return myAccess
   }
