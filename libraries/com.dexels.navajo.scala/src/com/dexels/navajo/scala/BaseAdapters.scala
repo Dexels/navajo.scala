@@ -1,6 +1,7 @@
 package com.dexels.navajo.scala
 
 import com.dexels.navajo.scala.document.NavajoMessage
+import com.dexels.navajo.script.api.Mappable
 
 trait BaseAdapters {
   self: ScalaCompiledScript =>
@@ -11,7 +12,11 @@ trait BaseAdapters {
     try {
       a(map.asInstanceOf[T]);
     } catch {
-      case e: Throwable => map.kill
+      case e: Throwable => {
+          map.kill
+          println ("\n" + e)
+      }
+      
     }
     map.store()
     return map.asInstanceOf[T]
