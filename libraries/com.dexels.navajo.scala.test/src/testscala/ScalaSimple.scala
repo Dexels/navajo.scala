@@ -7,11 +7,11 @@ import com.dexels.navajo.adapters.scala.api.AdaptersComponent
 
 class TestScalaSimple extends ScalaCompiledScript with AdaptersComponent {
    
-  override def run(a: NavajoRuntime) {
+  override def run() {
 
 //    addValidation(rt=>{
 //    })
-	val sport = a.output.addArrayMessage("Sport")
+	val sport = output.addArrayMessage("Sport")
 	sqlquery(sport,a=>{
 	  a.datasource("default")
 	  a.query("SELECT DISTINCT sporttype FROM sport")

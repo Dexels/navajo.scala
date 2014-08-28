@@ -10,18 +10,18 @@ import com.dexels.navajo.adapters.scala.api.AdaptersComponent
 
 class ScalaQueryClub extends ScalaCompiledScript with AdaptersComponent with SportlinkAdaptersComponent with FunctionComponent {
 
-  override def run(runtime: NavajoRuntime) {
+  override def run() {
 
-   val clubData = runtime.output.addMessage("ClubData");
+   val clubData = output.addMessage("ClubData");
+   println("hier")
 
-    sqlquery(clubData,sql => {
-      val transactionContext = sql.transactionContext 
+    sqlquery(clubData, sql => {
       var clubId = input.property("/QueryUpdateClub/ClubIdentifier")
       if (clubId == null) {
         clubId = input.property("/Club/ClubIdentifier")
       }
       sql.datasource("sportlinkkernel")
-      val codeDropdownLanguage = SingleValueQuery(transactionContext, "SELECT get_default_language() FROM dual").asInstanceOf[String]
+      val codeDropdownLanguage = SingleValueQuery(sql.transactionContext, "SELECT get_default_language() FROM dual").asInstanceOf[String]
       sql.query("""SELECT vw_club.name
                  , vw_club.shortname
                  , vw_club.activeentity
@@ -143,7 +143,7 @@ class ScalaQueryClub extends ScalaCompiledScript with AdaptersComponent with Spo
         clubData.addProperty("ClubShortName").description("Verkorte naam").value(Trim(result.value("shortname").asInstanceOf[String]))
         val typeOfClub: String = Trim(result.value("typeofclub").asInstanceOf[String])
         codedropdown(clubData, d => {
-          d.transactionContext(transactionContext).description("ClubType").name("TypeOfClub").direction("in").typeOfCode("CLUB_TYPE").language(codeDropdownLanguage)
+          d.transactionContext(sql.transactionContext).description("ClubType").name("TypeOfClub").direction("in").typeOfCode("CLUB_TYPE").language(codeDropdownLanguage)
             .selectedValue(typeOfClub).emptyOption(true).orderByDescription(true)
            
         })

@@ -11,19 +11,19 @@ import com.dexels.navajo.adapters.scala.api.AdaptersComponent
 
 class Script extends ScalaCompiledScript with FunctionComponent with AdaptersComponent {
 
-  override def run(a: NavajoRuntime) {
+  override def run() {
      ToSecureImage("aap");
-    val tralala = a.input.message("Tra")
+    val tralala = input.message("Tra")
 
     
     tralala.each(msg => {
       msg.property("MyProp").value(ToSecureImage("oops"))
     })
 
-    callScript(a.output, result => {
+    callScript(output, result => {
       tralala.property("Mombasa")
     })
-    a.output.message("Message").one(cMessage => {
+    output.message("Message").one(cMessage => {
       sqlquery(cMessage, map=> {
         map.query("aaap")
         map.datasource("sportlink")
