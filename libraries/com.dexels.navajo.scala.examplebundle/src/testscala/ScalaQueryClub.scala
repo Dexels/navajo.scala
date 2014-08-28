@@ -12,14 +12,14 @@ class ScalaQueryClub extends ScalaCompiledScript with AdaptersComponent with Spo
 
   override def run(runtime: NavajoRuntime) {
    System.err.println ("Access: "+runtime.parent.getInstance())
-   val clubData = runtime.output.addMessage("ClubData");
+   val clubData = output.addMessage("ClubData");
 
     sqlquery(clubData,sql => {
       val transactionContext = sql.transactionContext 
       sql.debug(true)
-      var clubId = input.value("/QueryUpdateClub/ClubIdentifier")
+      var clubId = input.property("/QueryUpdateClub/ClubIdentifier")
       if (clubId == null) {
-        clubId = input.value("/Club/ClubIdentifier")
+        clubId = input.property("/Club/ClubIdentifier")
       }
       sql.debug(true)
       sql.datasource("sportlinkkernel")

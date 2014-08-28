@@ -5,9 +5,9 @@ import com.dexels.navajo.scala.ScalaCompiledScript
 import com.dexels.navajo.function.scala.api._
 
 class FunctionScript extends ScalaCompiledScript with FunctionComponent {
-  override def run(a: NavajoRuntime) {
+  override def run() {
 	  
-	a.output.addMessage("Simple").one(f=>{
+	output.addMessage("Simple").one(f=>{
 	  f.addProperty("Binary").description("shake the room").value(ToSecureImage("boooom"));
 	  
 	});
