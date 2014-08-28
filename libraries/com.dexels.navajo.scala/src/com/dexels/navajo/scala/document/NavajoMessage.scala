@@ -2,7 +2,6 @@ package com.dexels.navajo.scala.document
 
 import com.dexels.navajo.document.Message
 import com.dexels.navajo.document.Property
-import scala.xml.Null
 
 class NavajoMessage(val parent: Message) {
 
