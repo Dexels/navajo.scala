@@ -28,7 +28,8 @@ import scala.xml.PrettyPrinter
 
 object ScalaXml {
   def main(args: Array[String]) {
-   
+    val projectHome = "/home/chris/dexels";
+    
     val navajopaths = Array("server/com.dexels.navajo.adapters", "core/com.dexels.navajo.function", "core/com.dexels.navajo.core",
       "server/com.dexels.navajo.entity", "example/com.dexels.navajo.example.adapter", "optional/com.dexels.navajo.function.pdf",
       "server/com.dexels.navajo.adapters.eventemitter", "optional/com.dexels.navajo.kml", "optional/com.dexels.navajo.twitter")
@@ -36,13 +37,13 @@ object ScalaXml {
 //          val navajopaths = Array("server/com.dexels.navajo.adapters")
 
       
-    createScalaFragmentGroup(navajopaths, new File("/Users/frank/git/navajo"), new File("/Users/frank/git/navajo.scala/generated"))
+    createScalaFragmentGroup(navajopaths, new File(projectHome + "/navajo"), new File(projectHome + "/navajo.scala/generated"))
 
     val enterprisepaths = Array("enterprise/com.dexels.navajo.enterprise", "enterprise/com.dexels.navajo.enterprise.adapters", "enterprise/com.dexels.navajo.enterprise.cluster", "enterprise/com.dexels.navajo.enterprise.hazelcast", "enterprise/com.dexels.navajo.enterprise.lucene", "enterprise/com.dexels.navajo.mongo")
-    createScalaFragmentGroup(enterprisepaths, new File("/Users/frank/git/enterprise"), new File("/Users/frank/git/navajo.scala/generated"))
+    createScalaFragmentGroup(enterprisepaths, new File(projectHome + "/enterprise"), new File(projectHome + "/navajo.scala/generated"))
 
     val sportlinkpaths = Array("libraries/com.sportlink.adapters", "libraries/com.sportlink.comp", "libraries/com.sportlink.financial.adapters", "libraries/com.sportlink.financial.functions")
-    createScalaFragmentGroup(sportlinkpaths, new File("/Users/frank/git/sportlink.library"), new File("/Users/frank/git/navajo.scala/generated"))
+    createScalaFragmentGroup(sportlinkpaths, new File(projectHome + "/sportlink.library"), new File(projectHome + "/navajo.scala/generated"))
 
   }
 
@@ -346,10 +347,19 @@ object ScalaXml {
 
   private def createClassDef(maptag: String, clz: String, values: NodeSeq, methods: NodeSeq, description: NodeSeq): Tree = {
     val classDef = (CLASSDEF(maptag.toUpperCase()) withParents ("Adapter") withParams ((PARAM("instance") withType (clz)) := NEW(clz)) := BLOCK(
-      List() ++
+      List[Tree] (
+             (  DEF("instance") withParams (PARAM("f") withType (TYPE_REF(clz) TYPE_=> UnitClass)) := BLOCK(
+                      REF("f") APPLY REF("instance") 
+                    )
+              )
+      ) ++
         createValues(maptag.toUpperCase(), values) ++
-        createMethods(methods)))
+        createMethods(methods)) 
+        )
 
+        
+        
+        
     return classDef
   }
 
@@ -495,8 +505,6 @@ object ScalaXml {
           if (isIn) {
             result.append(
               DEF(name) withType TYPE_REF(adapterType) withParams (PARAM(name) withType (NavajoFactory.getInstance().getJavaType(valueType).getName())) := BLOCK(
-                //        insertOperandList.append((REF("function") DOT "insertOperand") APPLY REF("arg" + i))
-
                 REF("instance") DOT "set" + name.capitalize APPLY REF(name),
                 RETURN(THIS)
               ))
