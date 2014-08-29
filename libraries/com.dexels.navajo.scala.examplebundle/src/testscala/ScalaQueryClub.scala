@@ -10,7 +10,7 @@ import com.dexels.navajo.adapters.scala.api.AdaptersComponent
 
 class ScalaQueryClub extends ScalaCompiledScript with AdaptersComponent with SportlinkAdaptersComponent with FunctionComponent {
 
-  override def run(runtime: NavajoRuntime) {
+  override def run() {
    System.err.println ("Access: "+runtime.parent.getInstance())
    val clubData = output.addMessage("ClubData");
 
