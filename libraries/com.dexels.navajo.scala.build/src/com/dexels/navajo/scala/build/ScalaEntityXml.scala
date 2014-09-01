@@ -9,15 +9,19 @@ import scala.collection.JavaConversions._
 import java.io.File
 import java.io.PrintWriter
 import scala.xml.XML
+import com.dexels.navajo.entity.Key
+import scala.collection.mutable.Map
 import scala.collection.mutable.MutableList
 
-object ScalaEntityXml extends ScalaXml  {
+
+class ScalaEntityXml extends ScalaXml  {
     val target = new File(projectHome , "navajo.scala/generated/com.dexels.navajo.entity.scala.api/src/")
     val entityDir =  new File(projectHome, "sportlink/scripts/entity")
     
      
 
-    override def main(args: Array[String]) {
+   
+    override def generate() {
 		if (!entityDir.exists()) {
 			return;
 		}
@@ -40,8 +44,10 @@ object ScalaEntityXml extends ScalaXml  {
         if (message == null)
             throw new Exception("Empty entity!");
 
-        val entityName = (message \ "@name").text
-
+        
+        val entityKeys : Map[String, ListBuffer[String]] = Map()
+        getKeys(entityKeys, message \ "property")
+        
         // extends="navajo://e1, navajo://e2"
         val extendedEntities = """navajo://(\w+)""".r.findAllIn((message \ "@extends").text).matchData
         
@@ -51,13 +57,18 @@ object ScalaEntityXml extends ScalaXml  {
             extenders.+=(TYPE_REF(REF(e.group(1)+"Entity")))
         )
         
+        val entityName = (message \ "@name").text
+     
         val classDef = BLOCK(
             List[Tree](
                 IMPORT("com.dexels.navajo.scala.document.NavajoDocument"),
                 (TRAITDEF(RootClass.newClass(entityName + "Entity")) withParents (extenders) := BLOCK(
                     List[Tree]()
+                        ++ generateKeyMethods(entityKeys)
                         ++ generateGetters(entityName, message \\ "property")
-                        ++ generateSetters(entityName, message \\ "property"))))) inPackage ("com.dexels.navajo.entity.scala.api")
+                        ++ generateSetters(entityName, message \\ "property")
+                       
+                        )))) inPackage ("com.dexels.navajo.entity.scala.api")
 
         val dstFile = new File(target, entityName + "Entity.scala")
         val writer = 
@@ -115,8 +126,43 @@ object ScalaEntityXml extends ScalaXml  {
         return result.iterator
     }
 
-   
+    def generateKeyMethods(entityKeys: Map[String, ListBuffer[String]]): ListBuffer[Tree] = {
+        val result = new ListBuffer[Tree]
+        entityKeys.foreach(tuple => {
+            val params : ListBuffer[ValDef] = new ListBuffer[ValDef]
+            tuple._2.foreach(keyString => (
+                     params.append(PARAM(keyString, "Any"))
+            ))
+            result.append(
+                    DEF("get") 
+                        withParams (params) := BLOCK() withComment("TODO"))
+        })
 
+       
+        return result
+    }
+
+    def getKeys(entityKeys: Map[String, ListBuffer[String]], properties: NodeSeq) = {
+        properties.foreach(f => {
+            val name = (f \ "@name").text
+            val key = (f \ "@key").text
+            if (! Option(key).getOrElse("").isEmpty) {
+                    var keyid = Key.getKeyId(key)
+                	if (keyid == null) keyid = "default"
+                	val coll = entityKeys.getOrElseUpdate(keyid, new ListBuffer[String]())
+                	coll.append(name)
+                
+            }
+
+        })
+
+    }
 }
-  
 
+object ScalaEntityXmlGenerator   {
+    
+    def main(args: Array[String]) {
+		val scalaEntityXml = new ScalaEntityXml 
+		scalaEntityXml.generate
+    }
+}

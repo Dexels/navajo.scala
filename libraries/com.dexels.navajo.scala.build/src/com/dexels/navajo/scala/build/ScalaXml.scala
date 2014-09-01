@@ -1,17 +1,18 @@
+package com.dexels.navajo.scala.build
+
+
 import java.io.InputStream
 import scala.xml.XML
 import scala.xml.Node
 import treehugger.forest._
-import definitions._
-import treehuggerDSL._
-import java.util.ArrayList
+import treehugger.forest.definitions._
+import treehugger.forest.treehuggerDSL._
 import scala.collection.mutable.ListBuffer
 import java.io.File
 import java.io.PrintWriter
 import com.dexels.navajo.document.NavajoFactory
 import scala.xml.NodeSeq
 import scala.xml.Elem
-import scala.io.Source
 import java.util.jar.Manifest
 import java.io.FileInputStream
 import java.util.Map
@@ -19,33 +20,29 @@ import java.io.FileOutputStream
 import java.util.jar.Attributes
 import scala.collection.JavaConversions._
 import java.util.HashMap
-import java.io.ByteArrayOutputStream
 import java.io.FileWriter
-import java.io.StringWriter
 import scala.xml.MinimizeMode
 import scala.xml.PrettyPrinter
+import scala.xml.NodeSeq.seqToNodeSeq
 //com.dexels.navajo.functions.util
 
-object ScalaXml {
-  def main(args: Array[String]) {
+class ScalaXml {
     val projectHome = "/home/chris/dexels";
-    
     val navajopaths = Array("server/com.dexels.navajo.adapters", "core/com.dexels.navajo.function", "core/com.dexels.navajo.core",
-      "server/com.dexels.navajo.entity", "example/com.dexels.navajo.example.adapter", "optional/com.dexels.navajo.function.pdf",
-      "server/com.dexels.navajo.adapters.eventemitter", "optional/com.dexels.navajo.kml", "optional/com.dexels.navajo.twitter")
-
-//          val navajopaths = Array("server/com.dexels.navajo.adapters")
-
-      
-    createScalaFragmentGroup(navajopaths, new File(projectHome + "/navajo"), new File(projectHome + "/navajo.scala/generated"))
-
+        "server/com.dexels.navajo.entity", "example/com.dexels.navajo.example.adapter", "optional/com.dexels.navajo.function.pdf",
+        "server/com.dexels.navajo.adapters.eventemitter", "optional/com.dexels.navajo.kml", "optional/com.dexels.navajo.twitter")
     val enterprisepaths = Array("enterprise/com.dexels.navajo.enterprise", "enterprise/com.dexels.navajo.enterprise.adapters", "enterprise/com.dexels.navajo.enterprise.cluster", "enterprise/com.dexels.navajo.enterprise.hazelcast", "enterprise/com.dexels.navajo.enterprise.lucene", "enterprise/com.dexels.navajo.mongo")
-    createScalaFragmentGroup(enterprisepaths, new File(projectHome + "/enterprise"), new File(projectHome + "/navajo.scala/generated"))
-
     val sportlinkpaths = Array("libraries/com.sportlink.adapters", "libraries/com.sportlink.comp", "libraries/com.sportlink.financial.adapters", "libraries/com.sportlink.financial.functions")
-    createScalaFragmentGroup(sportlinkpaths, new File(projectHome + "/sportlink.library"), new File(projectHome + "/navajo.scala/generated"))
 
-  }
+    def generate() {
+
+        //          val navajopaths = Array("server/com.dexels.navajo.adapters")
+
+        createScalaFragmentGroup(navajopaths, new File(projectHome + "/navajo"), new File(projectHome + "/navajo.scala/generated"))
+        createScalaFragmentGroup(enterprisepaths, new File(projectHome + "/enterprise"), new File(projectHome + "/navajo.scala/generated"))
+        createScalaFragmentGroup(sportlinkpaths, new File(projectHome + "/sportlink.library"), new File(projectHome + "/navajo.scala/generated"))
+
+    }
 
   def createScalaFragmentGroup(paths: Iterable[String], base: File, destination: File) = {
     val poms = new ListBuffer[String]
@@ -572,7 +569,7 @@ object ScalaXml {
             // foreach or something
         	insertOperandList.append(REF("arg"+i) FOREACH (  LAMBDA(PARAM("x")) ==> ( REF("function") DOT "insertOperand" APPLY REF("x") )))
         } else {
-        	insertOperandList.append((REF("function") DOT "insertOperand") APPLY REF("arg" + i))
+        	insertOperandList.append((REF("function") DOT "insertOperand") APPLY REF("arg" + i) )
         }
         i += 1
       })
@@ -582,14 +579,13 @@ object ScalaXml {
     })
   }
   
-  private def evaluateReturnType(xmlValue: String) : String = {
+  protected def evaluateReturnType(xmlValue: String) : String = {
     if(xmlValue ==null || "".equals(xmlValue)) {
       return "Any"
     }
     if(xmlValue.indexOf("|")!= -1) {
       return "Any"
     }
-    System.err.println("xmlValue: "+xmlValue);
     if(xmlValue.equals("list")) {
       return "List[Any]"
     }
@@ -639,3 +635,11 @@ object ScalaXml {
   }
 
 } 
+
+object ScalayXmlGenerator   {
+    
+    def main(args: Array[String]) {
+		val scalaXml = new ScalaXml 
+		scalaXml.generate
+    }
+}
