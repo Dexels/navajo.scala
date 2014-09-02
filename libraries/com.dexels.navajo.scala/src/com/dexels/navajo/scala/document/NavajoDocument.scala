@@ -3,11 +3,11 @@ package com.dexels.navajo.scala.document
 import com.dexels.navajo.document.Navajo
 import com.dexels.navajo.document.Message
 
-class NavajoDocument(val parent: Navajo) {
+class NavajoDocument(val parent: Navajo = null) {
   def message(name: String): NavajoMessage = {
     return new NavajoMessage(parent.getMessage(name));
   }
-
+  
   def propertyValue(name: String): Any = {
     val p = property(name)
     if (p == null) {

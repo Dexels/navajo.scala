@@ -18,17 +18,14 @@ class ScalaEntityXml extends ScalaXml  {
     val target = new File(projectHome , "navajo.scala/generated/com.dexels.navajo.entity.scala.api/src/")
     val entityDir =  new File(projectHome, "sportlink/scripts/entity")
     
-     
 
-   
-    override def generate() {
+    def generateEntities() {
 		if (!entityDir.exists()) {
 			return;
 		}
 		entityDir.listFiles().foreach( file => 
 		    if (file.isFile()) {
-				val xml = getXmlFrom(file)
-				generate(xml)
+				generateEntity(getXmlFrom(file))
 			}
 		)
     }
@@ -39,7 +36,7 @@ class ScalaEntityXml extends ScalaXml  {
 
     }
 
-    def generate(xml : scala.xml.Elem) = {
+    def generateEntity(xml : scala.xml.Elem) = {
         val message = xml \\ "message"
         if (message == null)
             throw new Exception("Empty entity!");
@@ -58,22 +55,29 @@ class ScalaEntityXml extends ScalaXml  {
         )
         
         val entityName = (message \ "@name").text
-     
-        val classDef = BLOCK(
+
+        val traitDef = BLOCK(
             List[Tree](
                 IMPORT("com.dexels.navajo.scala.document.NavajoDocument"),
+                IMPORT("com.dexels.navajo.document.Navajo"),
                 (TRAITDEF(RootClass.newClass(entityName + "Entity")) withParents (extenders) := BLOCK(
                     List[Tree]()
                         ++ generateKeyMethods(entityKeys)
                         ++ generateGetters(entityName, message \\ "property")
-                        ++ generateSetters(entityName, message \\ "property")
-                       
+                        ++ generateSetters(entityName, message \\ "property"))),
+                    (CLASSDEF(RootClass.newClass(entityName)) withParents (TYPE_REF(REF(entityName + "Entity")))
+                        withParams (VAL("parent", "Navajo")  withFlags (Flags.OVERRIDE) )
+                        := BLOCK( // Nothing
                         )))) inPackage ("com.dexels.navajo.entity.scala.api")
+                        
+        
+               // (override val parent: Navajo) 
+               
 
         val dstFile = new File(target, entityName + "Entity.scala")
         val writer = 
             new PrintWriter(dstFile)
-        writer.write(treeToString(classDef))
+        writer.write(treeToString(traitDef ))
         writer.close()
     }
 
@@ -163,6 +167,6 @@ object ScalaEntityXmlGenerator   {
     
     def main(args: Array[String]) {
 		val scalaEntityXml = new ScalaEntityXml 
-		scalaEntityXml.generate
+		scalaEntityXml.generateEntities
     }
 }
