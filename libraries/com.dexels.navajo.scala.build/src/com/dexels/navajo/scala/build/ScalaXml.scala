@@ -129,7 +129,7 @@ class ScalaXml {
       buffer.append(",")
       buffer.append(f + ".scala.api")
     })
-    buffer.append(",com.dexels.navajo.script.api,com.dexels.navajo,com.dexels.navajo.functions.util,org.slf4j,javax.servlet")
+    buffer.append(",com.dexels.navajo.script.api,com.dexels.navajo.functions.util,org.slf4j,javax.servlet")
     manifest.getMainAttributes().putValue("Import-Package", buffer.toString)
     val fos = new FileOutputStream(new File(metainf, "MANIFEST.MF"))
     manifest.write(fos)
