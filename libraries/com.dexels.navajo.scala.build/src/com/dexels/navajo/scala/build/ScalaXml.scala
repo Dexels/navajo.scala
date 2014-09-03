@@ -343,7 +343,7 @@ class ScalaXml {
   }
 
   private def createClassDef(maptag: String, clz: String, values: NodeSeq, methods: NodeSeq, description: NodeSeq): Tree = {
-    val classDef = (CLASSDEF(maptag.toUpperCase()) withParents ("Adapter") withParams ((PARAM("instance") withType (clz)) := NEW(clz)) := BLOCK(
+    val classDef = (CLASSDEF(maptag.toUpperCase()) withParents (TYPE_REF("Adapter")  APPLY REF("instance")) withParams ((PARAM("instance") withType (clz)) := NEW(clz)) := BLOCK(
       List[Tree] (
              (  DEF("instance") withParams (PARAM("f") withType (TYPE_REF(clz) TYPE_=> UnitClass)) := BLOCK(
                       REF("f") APPLY REF("instance") 
@@ -361,7 +361,7 @@ class ScalaXml {
   }
 
   private def createAbstractClassDef(maptag: String, clz: String, values: NodeSeq, methods: NodeSeq, description: NodeSeq): Tree = {
-    val classDef = (CLASSDEF(maptag.toUpperCase()) withParents ("Adapter") withParams ((PARAM("instance") withType (clz))) := BLOCK(
+    val classDef = (CLASSDEF(maptag.toUpperCase()) withParents (TYPE_REF("Adapter")  APPLY REF("instance")) withParams ((PARAM("instance") withType (clz))) := BLOCK(
       List() ++
         createValues(maptag.toUpperCase(),values) ++
         createMethods(methods)))
