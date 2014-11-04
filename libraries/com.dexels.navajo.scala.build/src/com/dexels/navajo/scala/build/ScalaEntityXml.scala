@@ -66,7 +66,7 @@ class ScalaEntityXml extends ScalaXml  {
                         ++ generateGetters(entityName, message \\ "property")
                         ++ generateSetters(entityName, message \\ "property"))),
                     (CLASSDEF(RootClass.newClass(entityName)) withParents (TYPE_REF(REF(entityName + "Entity")))
-                        withParams (VAL("parent", "Navajo")  withFlags (Flags.OVERRIDE) )
+                        withParams (VAL("wrapped", "Navajo")  withFlags (Flags.OVERRIDE) )
                         := BLOCK( // Nothing
                         )))) inPackage ("com.dexels.navajo.entity.scala.api")
                         
@@ -91,7 +91,7 @@ class ScalaEntityXml extends ScalaXml  {
             result.append(
                 DEF(propertyName) withType evalType := BLOCK(
                     // Check if property exists?
-                    REF("parent")
+                    REF("wrapped")
                         DOT "getProperty" APPLY (LIT("/" + entityName + "/" + propertyName))
                         DOT "getTypedValue()"
                         DOT "asInstanceOf[" + evalType + "]"))
@@ -111,18 +111,18 @@ class ScalaEntityXml extends ScalaXml  {
                     withParams (PARAM("newValue", "Any"))
                     := BLOCK(
                         // Create message if not exists
-                        IF(REF("parent") DOT "getMessage" APPLY (LIT(entityName)) ANY_== NULL)
+                        IF(REF("wrapped") DOT "getMessage" APPLY (LIT(entityName)) ANY_== NULL)
                             THEN
                             (REF("addMessage") APPLY (LIT(entityName))) ENDIF,
 
                         // Create property if not exists
-                        IF(REF("parent") DOT "getProperty" APPLY (LIT("/" + entityName + "/" + propertyName)) ANY_== NULL)
+                        IF(REF("wrapped") DOT "getProperty" APPLY (LIT("/" + entityName + "/" + propertyName)) ANY_== NULL)
                             THEN
                             (REF("message") APPLY (LIT(entityName)) DOT "addProperty" APPLY
                                 (LIT(propertyName)) DOT "propertyType" APPLY (LIT((f \ "@type").text))
                                 DOT "direction" APPLY (LIT((f \ "@direction").text))) ENDIF,
 
-                        REF("parent")
+                        REF("wrapped")
                             DOT "getProperty" APPLY (LIT("/" + entityName + "/" + propertyName))
                             DOT "setValue" APPLY (REF("newValue")
                                 DOT "asInstanceOf[" + evaluateReturnType((f \ "@type").text) + "]")))
