@@ -1,6 +1,7 @@
 package com.dexels.navajo.scala
 
 import com.dexels.navajo.scala.document.NavajoMessage
+import com.dexels.navajo.parser.FunctionInterface
 import com.dexels.navajo.script.api.Mappable
 
 trait BaseAdapters {
@@ -14,7 +15,8 @@ trait BaseAdapters {
     } catch {
       case e: Throwable => {
           map.kill
-          println ("\n" + e)
+          println("Exception in the map!")
+          println ("" + e)
       }
       
     }

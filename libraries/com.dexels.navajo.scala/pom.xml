@@ -15,7 +15,7 @@
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-compiler</artifactId>
-			<version>2.10.4</version>
+			<version>2.11.2</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -40,7 +40,7 @@
     <repository>
        <id>scala eclipse toolchain osgi</id>
        <layout>p2</layout>
-       <url>http://download.scala-ide.org/sdk/e38/scala210/stable/site</url>
+       <url>http://download.scala-ide.org/sdk/helium/e38/scala211/stable/site</url>
     </repository>
   </repositories>
 </project>

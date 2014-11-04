@@ -16,7 +16,7 @@ class ScalaTestPlayerEntity extends ScalaCompiledScript
     	val out  = outputEntity[Player];
 
         sqlquery(clubData, sql => {
-            sql.debug(true)
+            //sql.debug(true)
             sql.datasource("sportlinkkernel")
             sql.query(""" SELECT vp.personid
             ,      vp.firstname
@@ -48,10 +48,9 @@ class ScalaTestPlayerEntity extends ScalaCompiledScript
             
            // val n :PlayerEntity = NavajoFactory.create	
 
-
-            sql.addParameter(input.property("[/PlayerData/ClubIdentifier]"))
-            sql.addParameter(input.property("[/PlayerData/PersonId]"))
-            sql.addParameter(input.property("[/PlayerData/SportId]"))
+            sql.addParameter(input.property("/PlayerData/ClubIdentifier").value)
+            sql.addParameter(input.property("/PlayerData/PersonId").value)
+            sql.addParameter(input.property("/PlayerData/SportId").value)
             
             sql.instance(sqlMap => {
                 out.FirstName(sqlMap.getColumnValue("firstname"));
@@ -63,6 +62,9 @@ class ScalaTestPlayerEntity extends ScalaCompiledScript
                 out.Birthdate(sqlMap.getColumnValue("dateofbirth"))
                 out.Nationality1(sqlMap.getColumnValue("nationality"))
                 out.Nationality2(sqlMap.getColumnValue("secondnationality"))
+            })
+            callScript(script = "ABC",  input = out, withResult =  resultDoc => {
+                resultDoc.message("test")
             })
         })
     }

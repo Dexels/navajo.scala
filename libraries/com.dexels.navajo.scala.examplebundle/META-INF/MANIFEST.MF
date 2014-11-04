@@ -25,5 +25,7 @@ Import-Package: com.dexels.navajo.adapter,
  com.sportlink.adapters.scala.api,
  org.slf4j;version="[1.6.1,1.8.0)"
 Service-Component: OSGI-INF/*.xml
-Require-Bundle: org.scala-lang.scala-library;bundle-version="2.10.3",
- org.scala-lang.scala-reflect;bundle-version="2.10.3"
+Require-Bundle: org.scala-lang.modules.scala-xml;bundle-version="1.0.2",
+ org.scala-lang.scala-compiler;bundle-version="2.11.2",
+ org.scala-lang.scala-reflect;bundle-version="2.11.2",
+ org.scala-lang.scala-library;bundle-version="2.11.2"

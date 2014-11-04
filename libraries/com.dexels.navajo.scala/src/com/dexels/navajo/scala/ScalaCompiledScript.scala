@@ -36,7 +36,7 @@ abstract class ScalaCompiledScript extends CompiledScript {
 
     def run()
 
-    def callScript(input: NavajoDocument, withResult: NavajoDocument => Unit) {
+    def callScript(script: String, input: NavajoDocument = null, withResult: NavajoDocument => Unit ) {
 
     }
 

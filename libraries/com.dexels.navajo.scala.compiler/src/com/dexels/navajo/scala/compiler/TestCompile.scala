@@ -11,8 +11,8 @@ object TestCompile {
     val g = new Global(settings)
     val run = new g.Run
 
-    run.compile( List("/Users/frank/git/navajo.scala/com.dexels.navajo.scala.compiler/resource/testscala/ScalaSimple.scala")) // invoke compiler. it creates Test.class.
-    val url = new File("/Users/frank/git/navajo.scala/com.dexels.navajo.scala.compiler").toURI.toURL
+    run.compile( List("/home/chris/dexels/navajo.scala/libraries/com.dexels.navajo.scala.compiler/resource/testscala/ScalaSimple.scala")) // invoke compiler. it creates Test.class.
+    val url = new File("/home/chris/dexels/navajo.scala/libraries/com.dexels.navajo.scala.compiler").toURI.toURL
 
     System.err.println("URL: "+url);
     val classLoader = new java.net.URLClassLoader(

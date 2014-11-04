@@ -9,7 +9,5 @@ class ValidationContext(val runtime: NavajoRuntime) {
 
   }
 
-  def property(path: String): NavajoProperty = {
-    runtime.input.property(path)
-  }
+
 }

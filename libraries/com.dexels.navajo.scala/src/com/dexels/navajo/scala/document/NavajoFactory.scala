@@ -13,11 +13,11 @@ object NavajoFactory {
   }
 
   def createMessage(doc: NavajoDocument, name: String): NavajoMessage = {
-    new NavajoMessage(com.dexels.navajo.document.NavajoFactory.getInstance().createMessage(doc.parent, name))
+    new NavajoMessage(com.dexels.navajo.document.NavajoFactory.getInstance().createMessage(doc.wrapped, name))
   }
 
   def createArrayMessage(doc: NavajoDocument, name: String): NavajoMessage = {
-    new NavajoMessage(com.dexels.navajo.document.NavajoFactory.getInstance().createMessage(doc.parent, name, Message.MSG_TYPE_ARRAY))
+    new NavajoMessage(com.dexels.navajo.document.NavajoFactory.getInstance().createMessage(doc.wrapped, name, Message.MSG_TYPE_ARRAY))
   }
 
 }

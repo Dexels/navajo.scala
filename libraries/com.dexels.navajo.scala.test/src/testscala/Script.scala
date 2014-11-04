@@ -20,7 +20,7 @@ class Script extends ScalaCompiledScript with FunctionComponent with AdaptersCom
       msg.property("MyProp").value(ToSecureImage("oops"))
     })
 
-    callScript(output, result => {
+    callScript(script = "test/abc", input =  output, withResult =  result => {
       tralala.property("Mombasa")
     })
     output.message("Message").one(cMessage => {
