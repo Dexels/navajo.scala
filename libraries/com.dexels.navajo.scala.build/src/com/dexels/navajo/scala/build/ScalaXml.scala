@@ -109,7 +109,7 @@ class ScalaXml {
     manifest.getMainAttributes().putValue("Bundle-Name", bundleName)
     //	  manifest.getMainAttributes().putValue("Fragment-Host", sourceSymbolicName)
     manifest.getMainAttributes().putValue("Bundle-Vendor", "Dexels")
-    manifest.getMainAttributes().putValue("Require-Bundle", " com.dexels.navajo.scala,org.scala-lang.scala-library;bundle-version=\"2.10.3\"," + sourceSymbolicName)
+    manifest.getMainAttributes().putValue("Require-Bundle", " com.dexels.navajo.scala,org.scala-lang.scala-library;bundle-version=\"2.11.2\"," + sourceSymbolicName)
     manifest.getMainAttributes().putValue("Bundle-Version", version)
     manifest.getMainAttributes().putValue("Bundle-SymbolicName", symbolicName)
     manifest.getMainAttributes().putValue("Export-Package", symbolicName.toLowerCase() + ";version=" + version)
@@ -636,7 +636,7 @@ class ScalaXml {
 
 } 
 
-object ScalayXmlGenerator   {
+object ScalaXmlGenerator   {
     
     def main(args: Array[String]) {
 		val scalaXml = new ScalaXml 
