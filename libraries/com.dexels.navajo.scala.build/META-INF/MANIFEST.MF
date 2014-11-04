@@ -8,6 +8,7 @@ Bundle-ClassPath: .,
  lib/treehugger_2.10-0.3.0.jar
 Import-Package: com.dexels.navajo.document;version="2.2.1",
  com.dexels.navajo.document.types;version="2.2.0",
+ com.dexels.navajo.entity,
  org.slf4j;version="[1.6.1,1.8.0)",
- scala;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d",
- scala.xml;version="2.10.3.v20130923-060037-VFINAL-e2fec6b28d"
+ scala,
+ scala.xml

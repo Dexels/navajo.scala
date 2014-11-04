@@ -9,14 +9,14 @@ import scala.collection.JavaConversions._
 import java.io.File
 import java.io.PrintWriter
 import scala.xml.XML
-import com.dexels.navajo.entity.Key
 import scala.collection.mutable.Map
 import scala.collection.mutable.MutableList
+import com.dexels.navajo.entity.Key
 
 
 class ScalaEntityXml extends ScalaXml  {
     val target = new File(projectHome , "navajo.scala/generated/com.dexels.navajo.entity.scala.api/src/")
-    val entityDir =  new File(projectHome, "sportlink/scripts/entity")
+    val entityDir =  new File(projectHome, "sportlink/scripts/entity/knvb/tms/")
     
 
     def generateEntities() {
