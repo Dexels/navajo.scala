@@ -7,8 +7,6 @@ import com.dexels.navajo.function.scala.api.FunctionComponent
 import com.dexels.navajo.scala.document.NavajoFactory
 import com.dexels.navajo.entity.scala.api._
 import java.util.Date
-import com.dexels.navajo.adapters.scala.api.AdaptersComponent
-
 
 class ScalaTestPlayerEntity2 extends ScalaCompiledScript
      with AdaptersComponent with SportlinkAdaptersComponent with FunctionComponent {

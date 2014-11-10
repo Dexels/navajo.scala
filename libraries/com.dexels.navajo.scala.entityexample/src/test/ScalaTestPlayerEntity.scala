@@ -1,8 +1,11 @@
-package test
+package testscala
 
+import com.dexels.navajo.scala.ScalaCompiledScript
+import com.dexels.navajo.adapters.scala.api.AdaptersComponent
 import com.sportlink.adapters.scala.api.SportlinkAdaptersComponent
+import com.dexels.navajo.function.scala.api.FunctionComponent
+import com.dexels.navajo.scala.document.NavajoFactory
 import com.dexels.navajo.entity.scala.api._
-
 
 class ScalaTestPlayerEntity extends ScalaCompiledScript
      with AdaptersComponent with SportlinkAdaptersComponent with FunctionComponent {
@@ -43,7 +46,7 @@ class ScalaTestPlayerEntity extends ScalaCompiledScript
             AND    vpl.sportid        = ?
             AND    vpl.personid       = vp.personid""")
             
-           // val n :PlayerEntity = NavajoFactory.create 	
+           // val n :PlayerEntity = NavajoFactory.create	
 
             sql.addParameter(input.property("/PlayerData/ClubIdentifier").value)
             sql.addParameter(input.property("/PlayerData/PersonId").value)
