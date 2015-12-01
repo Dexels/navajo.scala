@@ -1,6 +1,6 @@
 package testscala
 
-import com.dexels.navajo.scala.ScalaCompiledScript
+import com.dexels.navajo.scala.ScalaScript
 import com.dexels.navajo.scala.document.NavajoRuntime
 import com.dexels.navajo.adapter.functions.SingleValueQuery
 import com.dexels.navajo.adapters.scala.api.AdaptersComponent
@@ -8,12 +8,11 @@ import com.sportlink.adapters.scala.api.SportlinkAdaptersComponent
 import com.dexels.navajo.function.scala.api.FunctionComponent
 import com.dexels.navajo.adapters.scala.api.AdaptersComponent
 
-class ScalaQueryClub extends ScalaCompiledScript with AdaptersComponent with SportlinkAdaptersComponent with FunctionComponent {
+class ScalaQueryClub extends ScalaScript with AdaptersComponent with SportlinkAdaptersComponent with FunctionComponent {
 
   override def run() {
 
-   val clubData = output.addMessage("ClubData");
-   println("hier")
+    val clubData = output.addMessage("ClubData");
 
     sqlquery(clubData, sql => {
       var clubId = input.property("/QueryUpdateClub/ClubIdentifier")

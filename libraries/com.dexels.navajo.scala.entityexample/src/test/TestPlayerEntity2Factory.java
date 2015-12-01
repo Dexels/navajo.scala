@@ -1,4 +1,4 @@
-package testscala;
+package test;
 import com.dexels.navajo.mapping.*;
 import com.dexels.navajo.script.api.*;
 

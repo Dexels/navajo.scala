@@ -5,12 +5,10 @@ import com.dexels.navajo.scala.document.NavajoRuntime
 import com.dexels.navajo.adapters.scala.api.AdaptersComponent
 
 
-class TestScalaSimple extends ScalaCompiledScript with AdaptersComponent {
+class TestScalaSimple extends ScalaScript with AdaptersComponent {
    
   override def run() {
 
-//    addValidation(rt=>{
-//    })
 	val sport = output.addArrayMessage("Sport")
 	sqlquery(sport,a=>{
 	  a.datasource("default")

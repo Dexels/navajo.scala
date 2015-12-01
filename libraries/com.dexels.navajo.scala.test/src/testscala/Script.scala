@@ -8,8 +8,9 @@ import com.dexels.navajo.scala.document.NavajoMessage
 import com.dexels.navajo.functions.ToSecureImage
 import com.dexels.navajo.function.scala.api.FunctionComponent
 import com.dexels.navajo.adapters.scala.api.AdaptersComponent
+import com.dexels.navajo.scala.document.NavajoDocument
 
-class Script extends ScalaCompiledScript with FunctionComponent with AdaptersComponent {
+class Script extends ScalaScript with FunctionComponent with AdaptersComponent {
 
   override def run() {
      ToSecureImage("aap");
@@ -20,9 +21,12 @@ class Script extends ScalaCompiledScript with FunctionComponent with AdaptersCom
       msg.property("MyProp").value(ToSecureImage("oops"))
     })
 
-    callScript(script = "test/abc", input =  output, withResult =  result => {
+
+    
+    callScript(script = "test/abc", input  =  output) ((result) => {
       tralala.property("Mombasa")
     })
+    
     output.message("Message").one(cMessage => {
       sqlquery(cMessage, map=> {
         map.query("aaap")

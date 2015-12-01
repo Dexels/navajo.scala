@@ -1,9 +1,9 @@
 package com.dexels.navajo.scala.test
 
 import com.dexels.navajo.scala.document.NavajoRuntime
-import com.dexels.navajo.scala.ScalaCompiledScript
+import com.dexels.navajo.scala.ScalaScript
 
-class JoinScript extends ScalaCompiledScript {
+class JoinScript extends ScalaScript {
   override def run() {
     val out = output.addArrayMessage("List");
     input.message("Input").freejoin(input.message("JoinInput"), (m1, m2) => {
